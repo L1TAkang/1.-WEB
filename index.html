@@ -114,10 +114,10 @@
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            gap: 40px; /* Increased gap between sections */
+            gap: 80px; /* USP와 이미지 사이 간격을 더 넓게 조정 */
             position: relative;
             border: 2px solid #36474F;
-            padding: 25px;
+            padding: 100px 80px; /* 이미지에 맞춰 여백 조정 (상하 100px, 좌우 80px) */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             /* margin: 0 auto; removed, centering handled by parent flexbox */
             /* transform will be applied by JS for preview scaling */
@@ -136,10 +136,10 @@
         .content-module-1 .description-text {
             font-size: 50px; /* Product description font size increased to 50px */
             line-height: 1.8; /* Line height increased */
-            word-break: keep-all;
+            word-break: keep-all; /* 단어 잘림 허용하지 않음 (롤백) */
             overflow-wrap: break-word;
             white-space: pre-wrap; /* Preserve whitespace and wrap */
-            letter-spacing: -0.04em; /* Letter spacing narrowed further */
+            letter-spacing: -0.06em; /* 자간을 더 좁게 조정 */
         }
 
         .content-module-1 .product-image-container {
@@ -164,6 +164,108 @@
             display: none;
         }
 
+        /* Content Module 3 Specific Styles */
+        .content-module-3 {
+            width: 1200px; /* Base width for calculation and download */
+            background-color: #ffffff;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 80px; /* 타이틀명과 사진 간격 조정 */
+            position: relative;
+            border: 2px solid #36474F;
+            padding: 80px; /* Overall padding for module 3 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform-origin: top left; /* Default origin for scaling */
+        }
+
+        .content-module-3 .module-title-area {
+            text-align: center;
+        }
+
+        .content-module-3 .module-subtitle {
+            font-size: 40px;
+            font-weight: normal;
+            line-height: 1.4;
+            margin-bottom: 10px;
+            white-space: pre-wrap;
+        }
+
+        .content-module-3 .module-main-title {
+            font-size: 80px;
+            font-weight: bold;
+            line-height: 1.2;
+            white-space: pre-wrap;
+        }
+
+        .content-module-3 .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px; /* 이미지 사이 간격을 좁게 조정 */
+            margin-bottom: 40px; /* Gap between grid and product list */
+        }
+
+        .content-module-3 .grid-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            /* gap: 20px; removed, no text inside grid item now */
+        }
+
+        .content-module-3 .grid-image-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 125%; /* Aspect ratio 4:5 */
+            overflow: hidden;
+            background-color: #f0f0f0;
+            border-radius: 8px; /* Rounded corners for images */
+        }
+
+        .content-module-3 .grid-image-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .content-module-3 .product-list-area {
+            padding-top: 20px; /* Padding above the list */
+            border-top: 2px solid #eee; /* Separator line */
+            text-align: left; /* 전체 목록 왼쪽 정렬 */
+        }
+
+        .content-module-3 .product-list-area ol {
+            list-style: none; /* Remove default list style */
+            counter-reset: product-counter; /* Initialize counter */
+            padding-left: 0; /* Remove default padding */
+        }
+
+        .content-module-3 .product-list-area li {
+            counter-increment: product-counter; /* Increment counter */
+            font-size: 32px; /* Font size for product details */
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-break: keep-all;
+            margin-bottom: 15px; /* Spacing between list items */
+            padding-left: 40px; /* Space for custom number */
+            position: relative;
+        }
+
+        .content-module-3 .product-list-area li::before {
+            content: counter(product-counter) "."; /* Display counter */
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            color: #36474F; /* Number color */
+            width: 30px; /* Width for number */
+            text-align: left; /* 번호 왼쪽 정렬 */
+            /* margin-right: 10px; removed, not needed with absolute positioning and padding-left */
+        }
+
         /* Active tab styling */
         .tab-button.active {
             background-color: #36474F;
@@ -181,6 +283,22 @@
             }
             .description-text {
                 font-size: 18px !important; /* Adjust for mobile if needed */
+            }
+            .content-module-3 .module-subtitle {
+                font-size: 24px;
+            }
+            .content-module-3 .module-main-title {
+                font-size: 40px;
+            }
+            .content-module-3 .grid-container {
+                grid-template-columns: 1fr; /* Single column on mobile */
+            }
+            .content-module-3 .product-list-area li {
+                font-size: 20px;
+                padding-left: 30px;
+            }
+            .content-module-3 .product-list-area li::before {
+                width: 20px;
             }
         }
 
@@ -252,6 +370,97 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Module 3 Inputs (Content 3) -->
+                <div id="module3Inputs" class="content-input-section hidden">
+                    <div class="space-y-4">
+                        <div class="input-group">
+                            <label for="module3Subtitle" class="block text-sm font-medium text-gray-700">타이틀 부연설명:</label>
+                            <div class="flex items-center mt-1">
+                                <textarea id="module3Subtitle" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2 min-h-[40px]">MD PICK</textarea>
+                                <input type="color" id="module3SubtitleColor" value="#333333" class="color-square-input">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="module3Title" class="block text-sm font-medium text-gray-700">타이틀명:</label>
+                            <div class="flex items-center mt-1">
+                                <textarea id="module3Title" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2 min-h-[60px]">지금 사면 좋을 특가 아이템</textarea>
+                                <input type="color" id="module3TitleColor" value="#333333" class="color-square-input">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="module3BgColor" class="block text-sm font-medium text-gray-700">배경 색깔:</label>
+                            <input type="color" id="module3BgColor" value="#ffffff" class="mt-1 block w-full h-10 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-1">
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-gray-800 mt-6 mb-3">구역별 이미지 및 상품 선택</h3>
+                    <div class="space-y-6">
+                        <!-- Section A -->
+                        <div class="border border-gray-200 p-4 rounded-md">
+                            <h4 class="font-semibold text-gray-700 mb-2">구역 A</h4>
+                            <div class="mb-3">
+                                <label for="productSelectA" class="block text-sm font-medium text-gray-700">상품 선택:</label>
+                                <select id="productSelectA" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2">
+                                    <!-- Options will be populated by JS -->
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="productImageA" class="block text-sm font-medium text-gray-700">이미지 업로드:</label>
+                                <input type="file" id="productImageA" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            </div>
+                        </div>
+
+                        <!-- Section B -->
+                        <div class="border border-gray-200 p-4 rounded-md">
+                            <h4 class="font-semibold text-gray-700 mb-2">구역 B</h4>
+                            <div class="mb-3">
+                                <label for="productSelectB" class="block text-sm font-medium text-gray-700">상품 선택:</label>
+                                <select id="productSelectB" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2">
+                                    <!-- Options will be populated by JS -->
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="productImageB" class="block text-sm font-medium text-gray-700">이미지 업로드:</label>
+                                <input type="file" id="productImageB" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            </div>
+                        </div>
+
+                        <!-- Section C -->
+                        <div class="border border-gray-200 p-4 rounded-md">
+                            <h4 class="font-semibold text-gray-700 mb-2">구역 C</h4>
+                            <div class="mb-3">
+                                <label for="productSelectC" class="block text-sm font-medium text-gray-700">상품 선택:</label>
+                                <select id="productSelectC" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2">
+                                    <!-- Options will be populated by JS -->
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="productImageC" class="block text-sm font-medium text-gray-700">이미지 업로드:</label>
+                                <input type="file" id="productImageC" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            </div>
+                        </div>
+
+                        <!-- Section D -->
+                        <div class="border border-gray-200 p-4 rounded-md">
+                            <h4 class="font-semibold text-gray-700 mb-2">구역 D</h4>
+                            <div class="mb-3">
+                                <label for="productSelectD" class="block text-sm font-medium text-gray-700">상품 선택:</label>
+                                <select id="productSelectD" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2">
+                                    <!-- Options will be populated by JS -->
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="productImageD" class="block text-sm font-medium text-gray-700">이미지 업로드:</label>
+                                <input type="file" id="productImageD" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mt-6">
+                        <label for="module3ProductListTextColor" class="block text-sm font-medium text-gray-700">상품 목록 폰트 색상:</label>
+                        <input type="color" id="module3ProductListTextColor" value="#333333" class="mt-1 block w-full h-10 rounded-md border-gray-300 shadow-sm p-1">
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -273,15 +482,15 @@
                 <div class="input-group w-full max-w-xs mr-4"> <!-- Added mr-4 for spacing -->
                     <label for="previewScale" class="block text-sm font-medium text-gray-700 mb-1">미리보기 배율:</label>
                     <select id="previewScale" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2">
+                        <option value="0.25">25%</option>
+                        <option value="0.5" selected>50%</option> <!-- 50%를 기본값으로 설정 -->
+                        <option value="0.75">75%</option>
                         <option value="1.0">100%</option>
-                        <option value="0.75" selected>75%</option>
-                        <option value="0.5">50%</option>
                     </select>
                 </div>
-                <!-- Update and Download Buttons -->
+                <!-- Download Button Only -->
                 <div class="flex gap-2">
-                    <button class="update-button bg-green-600 text-white py-2 px-4 rounded-md font-semibold hover:bg-green-700 transition duration-300" id="updatePreview">업데이트</button>
-                    <button class="copy-button bg-gray-700 text-white py-2 px-4 rounded-md font-semibold hover:bg-gray-800 transition duration-300" id="downloadContent">다운로드</button> <!-- Text changed to '다운로드' -->
+                    <button class="copy-button bg-gray-700 text-white py-2 px-4 rounded-md font-semibold hover:bg-gray-800 transition duration-300" id="downloadContent">다운로드</button>
                 </div>
             </div>
 
@@ -306,9 +515,45 @@
                 <div id="tabContent2" class="tab-content hidden w-full">
                     <p class="text-gray-500 text-center py-10">콘텐츠 레이아웃 2</p>
                 </div>
-                <!-- Content for Tab 3 (Placeholder) -->
+                <!-- Content for Tab 3 (Module 3) -->
                 <div id="tabContent3" class="tab-content hidden w-full">
-                    <p class="text-gray-500 text-center py-10">콘텐츠 레이아웃 3</p>
+                    <div class="content-module-3" id="content3Module">
+                        <div class="module-title-area">
+                            <div class="module-subtitle" id="displayModule3Subtitle" style="color: #333333;">
+                                MD PICK
+                            </div>
+                            <div class="module-main-title" id="displayModule3Title" style="color: #333333;">
+                                지금 사면 좋을 특가 아이템
+                            </div>
+                        </div>
+                        <div class="grid-container">
+                            <div class="grid-item">
+                                <div class="grid-image-container">
+                                    <img id="displayProductImageA" src="https://placehold.co/400x500/A0A0A0/FFFFFF?text=Image+A" alt="Image A">
+                                </div>
+                            </div>
+                            <div class="grid-item">
+                                <div class="grid-image-container">
+                                    <img id="displayProductImageB" src="https://placehold.co/400x500/A0A0A0/FFFFFF?text=Image+B" alt="Image B">
+                                </div>
+                            </div>
+                            <div class="grid-item">
+                                <div class="grid-image-container">
+                                    <img id="displayProductImageC" src="https://placehold.co/400x500/A0A0A0/FFFFFF?text=Image+C" alt="Image C">
+                                </div>
+                            </div>
+                            <div class="grid-item">
+                                <div class="grid-image-container">
+                                    <img id="displayProductImageD" src="https://placehold.co/400x500/A0A0A0/FFFFFF?text=Image+D" alt="Image D">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-list-area">
+                            <ol id="displayProductList">
+                                <!-- Product list items will be rendered here by JS -->
+                            </ol>
+                        </div>
+                    </div>
                 </div>
                 <!-- Content for Tab 4 (Placeholder) -->
                 <div id="tabContent4" class="tab-content hidden w-full">
@@ -331,7 +576,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // --- DOM Elements ---
             const productInfoContainer = document.getElementById('productInfoContainer');
-            const productSelect = document.getElementById('productSelect');
+            const productSelect = document.getElementById('productSelect'); // Module 1 product select
 
             // Module 1 Inputs (Content 1)
             const module1Inputs = document.getElementById('module1Inputs');
@@ -349,9 +594,37 @@
             const displayProductImage = document.getElementById('displayProductImage');
             const content1Module = document.getElementById('content1Module');
 
+            // Module 3 Inputs (Content 3)
+            const module3Inputs = document.getElementById('module3Inputs');
+            const module3SubtitleInput = document.getElementById('module3Subtitle');
+            const module3TitleInput = document.getElementById('module3Title');
+            const module3BgColorInput = document.getElementById('module3BgColor');
+            const module3SubtitleColorInput = document.getElementById('module3SubtitleColor');
+            const module3TitleColorInput = document.getElementById('module3TitleColor');
+
+            const productSelectA = document.getElementById('productSelectA');
+            const productImageAInput = document.getElementById('productImageA');
+            const productSelectB = document.getElementById('productSelectB');
+            const productImageBInput = document.getElementById('productImageB');
+            const productSelectC = document.getElementById('productSelectC');
+            const productImageCInput = document.getElementById('productImageC');
+            const productSelectD = document.getElementById('productSelectD');
+            const productImageDInput = document.getElementById('productImageD');
+            const module3ProductListTextColorInput = document.getElementById('module3ProductListTextColor');
+
+            // Display elements for Content 3 Module
+            const content3Module = document.getElementById('content3Module');
+            const displayModule3Subtitle = document.getElementById('displayModule3Subtitle');
+            const displayModule3Title = document.getElementById('displayModule3Title');
+            const displayProductImageA = document.getElementById('displayProductImageA');
+            const displayProductImageB = document.getElementById('displayProductImageB');
+            const displayProductImageC = document.getElementById('displayProductImageC');
+            const displayProductImageD = document.getElementById('displayProductImageD');
+            const displayProductList = document.getElementById('displayProductList');
+
+
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
-            const updatePreviewButton = document.getElementById('updatePreview');
             const downloadContentButton = document.getElementById('downloadContent');
 
             const messageBoxOverlay = document.getElementById('messageBoxOverlay');
@@ -391,6 +664,11 @@
             ];
 
             let selectedProductIndexModule1 = 0; // For module 1's product selection
+            let selectedProductIndexA = 0; // For module 3, section A
+            let selectedProductIndexB = 1; // For module 3, section B (default to different product for demo)
+            let selectedProductIndexC = 2; // For module 3, section C
+            let selectedProductIndexD = 3; // For module 3, section D
+
             const BASE_CONTENT_WIDTH = 1200; // Base width of the content module (for download)
 
             // --- Helper Functions ---
@@ -487,7 +765,7 @@
             }
 
             /**
-             * Renders product selection dropdowns for Module 1.
+             * Renders product selection dropdowns for Module 1 and Module 3 sections.
              */
             function renderProductSelectionDropdowns() {
                 // For Module 1
@@ -500,6 +778,27 @@
                         option.selected = true;
                     }
                     productSelect.appendChild(option);
+                });
+
+                // For Module 3 sections (A, B, C, D)
+                [productSelectA, productSelectB, productSelectC, productSelectD].forEach((selectElement, sectionIndex) => {
+                    selectElement.innerHTML = '';
+                    products.forEach((product, index) => {
+                        const option = document.createElement('option');
+                        option.value = index;
+                        option.textContent = `상품 ${index + 1} (${product.productName || '이름 없음'})`;
+                        // Set selected based on the specific section's selected index
+                        if (sectionIndex === 0 && index === selectedProductIndexA) {
+                            option.selected = true;
+                        } else if (sectionIndex === 1 && index === selectedProductIndexB) {
+                            option.selected = true;
+                        } else if (sectionIndex === 2 && index === selectedProductIndexC) {
+                            option.selected = true;
+                        } else if (sectionIndex === 3 && index === selectedProductIndexD) {
+                            option.selected = true;
+                        }
+                        selectElement.appendChild(option);
+                    });
                 });
             }
 
@@ -516,8 +815,15 @@
              */
             function applyPreviewScale() {
                 const scale = parseFloat(previewScaleInput.value);
-                content1Module.style.transform = `scale(${scale})`;
-                content1Module.style.transformOrigin = 'top left'; // Set origin for consistent scaling
+                // Apply scale to currently active module
+                const activeTabElement = document.querySelector('.tab-button.active');
+                if (activeTabElement.dataset.tab === '1') {
+                    content1Module.style.transform = `scale(${scale})`;
+                    content1Module.style.transformOrigin = 'top left';
+                } else if (activeTabElement.dataset.tab === '3') {
+                    content3Module.style.transform = `scale(${scale})`;
+                    content3Module.style.transformOrigin = 'top left';
+                }
             }
 
             /**
@@ -535,6 +841,56 @@
                 applyPreviewScale(); // Apply scale after updating content
             }
 
+            /**
+             * Updates the content and styling of the Content 3 Module.
+             */
+            function updateContent3Module() {
+                displayModule3Subtitle.textContent = module3SubtitleInput.value;
+                displayModule3Title.textContent = module3TitleInput.value;
+                content3Module.style.backgroundColor = module3BgColorInput.value;
+
+                displayModule3Subtitle.style.color = module3SubtitleColorInput.value;
+                displayModule3Title.style.color = module3TitleColorInput.value;
+
+                // Update product images for each section
+                const updateImage = (displayImageEl, inputEl) => {
+                    // If a file is selected, use it. Otherwise, use placeholder.
+                    if (inputEl.files && inputEl.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            displayImageEl.src = e.target.result;
+                        };
+                        reader.readAsDataURL(inputEl.files[0]);
+                    } else {
+                        // Default placeholder images
+                        const sectionLetter = displayImageEl.id.replace('displayProductImage', '');
+                        displayImageEl.src = `https://placehold.co/400x500/A0A0A0/FFFFFF?text=Image+${sectionLetter}`;
+                    }
+                };
+
+                updateImage(displayProductImageA, productImageAInput);
+                updateImage(displayProductImageB, productImageBInput);
+                updateImage(displayProductImageC, productImageCInput);
+                updateImage(displayProductImageD, productImageDInput);
+
+                // Update product list at the bottom
+                displayProductList.innerHTML = ''; // Clear previous list items
+                const selectedProductIndices = [selectedProductIndexA, selectedProductIndexB, selectedProductIndexC, selectedProductIndexD];
+                
+                selectedProductIndices.forEach((index, i) => {
+                    const product = products[index];
+                    if (product) {
+                        const listItem = document.createElement('li');
+                        // Make brand name bold
+                        listItem.innerHTML = `<strong>${product.brandName}</strong> | ${product.productName} ${product.discountRate} ${product.price}`;
+                        listItem.style.color = module3ProductListTextColorInput.value;
+                        displayProductList.appendChild(listItem);
+                    }
+                });
+
+                applyPreviewScale(); // Apply scale after updating content
+            }
+
             // --- Event Listeners ---
             productImageInput.addEventListener('change', function(event) {
                 const file = event.target.files[0];
@@ -547,41 +903,67 @@
                 }
             });
 
+            // Generic image upload handler for Module 3 sections
+            const handleModule3ImageUpload = (inputElement) => {
+                inputElement.addEventListener('change', updateContent3Module); // Just call updateContent3Module
+            };
+
+            handleModule3ImageUpload(productImageAInput);
+            handleModule3ImageUpload(productImageBInput);
+            handleModule3ImageUpload(productImageCInput);
+            handleModule3ImageUpload(productImageDInput);
+
+
             // Module 1 input listeners
             lookbookBgColorInput.addEventListener('input', updateContent1Module);
             uspLine1Input.addEventListener('input', updateContent1Module);
             descriptionInput.addEventListener('input', updateContent1Module);
             uspLine1TextColorInput.addEventListener('input', updateContent1Module);
             descriptionTextColorInput.addEventListener('input', updateContent1Module);
-            previewScaleInput.addEventListener('change', updateContent1Module); // Listen to scale changes
+            previewScaleInput.addEventListener('change', applyPreviewScale); // Listen to scale changes for any active module
 
             // Main product selection dropdown change listener for Module 1
             productSelect.addEventListener('change', (e) => {
                 selectedProductIndexModule1 = parseInt(e.target.value);
                 updateContentCreationInputsModule1();
+                updateContent1Module(); // Update Module 1 display immediately
             });
 
-            // Right panel "업데이트" button - updates the currently active module (only Module 1 now)
-            updatePreviewButton.addEventListener('click', () => {
-                updateContent1Module();
-            });
+            // Module 3 input listeners
+            module3SubtitleInput.addEventListener('input', updateContent3Module);
+            module3TitleInput.addEventListener('input', updateContent3Module);
+            module3BgColorInput.addEventListener('input', updateContent3Module);
+            module3SubtitleColorInput.addEventListener('input', updateContent3Module);
+            module3TitleColorInput.addEventListener('input', updateContent3Module);
+            module3ProductListTextColorInput.addEventListener('input', updateContent3Module); // New listener for product list text color
 
-            // Tab switching logic (now for all tabs, but only tab 1 has content)
+            // Module 3 product selection listeners
+            productSelectA.addEventListener('change', (e) => { selectedProductIndexA = parseInt(e.target.value); updateContent3Module(); });
+            productSelectB.addEventListener('change', (e) => { selectedProductIndexB = parseInt(e.target.value); updateContent3Module(); });
+            productSelectC.addEventListener('change', (e) => { selectedProductIndexC = parseInt(e.target.value); updateContent3Module(); });
+            productSelectD.addEventListener('change', (e) => { selectedProductIndexD = parseInt(e.target.value); updateContent3Module(); });
+
+
+            // Tab switching logic
             tabButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     tabButtons.forEach(btn => btn.classList.remove('active'));
                     tabContents.forEach(content => content.classList.add('hidden'));
+                    document.querySelectorAll('.content-input-section').forEach(section => section.classList.add('hidden')); // Hide all input sections
 
                     button.classList.add('active');
                     const targetTabId = `tabContent${button.dataset.tab}`;
                     document.getElementById(targetTabId).classList.remove('hidden');
 
+                    // Show relevant input section and update module
                     if (button.dataset.tab === '1') {
                         module1Inputs.classList.remove('hidden');
                         updateContent1Module();
-                    } else {
-                        module1Inputs.classList.add('hidden');
+                    } else if (button.dataset.tab === '3') {
+                        module3Inputs.classList.remove('hidden');
+                        updateContent3Module();
                     }
+                    // Tab 2 and 4 are placeholders, no specific inputs to show/hide
                 });
             });
 
@@ -592,13 +974,14 @@
 
                 if (activeTabElement.dataset.tab === '1') {
                     moduleToDownload = content1Module;
+                } else if (activeTabElement.dataset.tab === '3') {
+                    moduleToDownload = content3Module;
                 } else {
-                    showMessageBox('현재 선택된 탭은 미리보기 콘텐츠가 없습니다. 콘텐츠 1만 다운로드 가능합니다.');
+                    showMessageBox('현재 선택된 탭은 미리보기 콘텐츠가 없습니다. 콘텐츠 1 또는 3만 다운로드 가능합니다.');
                     return;
                 }
 
                 downloadContentButton.style.display = 'none';
-                updatePreviewButton.style.display = 'none';
 
                 // Store current transform and origin
                 const currentTransform = moduleToDownload.style.transform;
@@ -634,7 +1017,6 @@
                     moduleToDownload.style.transform = currentTransform;
                     moduleToDownload.style.transformOrigin = currentTransformOrigin;
                     downloadContentButton.style.display = 'block';
-                    updatePreviewButton.style.display = 'block';
                 }
             });
 
@@ -643,6 +1025,7 @@
             renderProductSelectionDropdowns();
             updateContentCreationInputsModule1();
             updateContent1Module(); // Initial update for module 1 (default active)
+            // No initial update for module 3 as it's hidden by default
         });
     </script>
 </body>
