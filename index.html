@@ -210,7 +210,6 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            /* gap: 20px; removed, no text inside grid item now */
         }
 
         .content-module-3 .grid-image-container {
@@ -260,10 +259,13 @@
             position: absolute;
             left: 0;
             font-weight: bold;
-            color: #36474F; /* Number color */
+            color: currentColor; /* Inherit color from parent li */
             width: 30px; /* Width for number */
             text-align: left; /* 번호 왼쪽 정렬 */
-            /* margin-right: 10px; removed, not needed with absolute positioning and padding-left */
+        }
+
+        .content-module-3 .product-list-area li strong {
+            font-weight: bold; /* 브랜드명 굵게 */
         }
 
         /* Active tab styling */
