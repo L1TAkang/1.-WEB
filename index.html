@@ -107,48 +107,48 @@
             transform: rotate(180deg);
         }
 
-        /* Lookbook Module Specific Styles */
-        .lookbook-module {
-            width: 1200px; /* Fixed width as requested */
+        /* Content Module 1 Specific Styles */
+        .content-module-1 {
+            width: 1200px; /* Base width for calculation and download */
             background-color: #ffffff;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            gap: 25px; /* Gap between sections */
+            gap: 40px; /* Increased gap between sections */
             position: relative;
             border: 2px solid #36474F;
             padding: 25px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin: 0 auto; /* Center the module */
+            /* margin: 0 auto; removed, centering handled by parent flexbox */
+            /* transform will be applied by JS for preview scaling */
+            transform-origin: top left; /* Default origin for scaling */
         }
 
-        .lookbook-module .main-title {
-            font-size: 36px; /* USP font size */
+        .content-module-1 .main-title {
+            font-size: 65px; /* USP font size changed to 65px */
             font-weight: bold;
-            line-height: 1.3;
+            line-height: 1.4; /* Line height increased */
             margin-bottom: 0; /* Adjusted margin */
+            white-space: pre-wrap; /* Preserve whitespace and wrap */
+            text-align: left; /* Left-align USP text */
         }
 
-        .lookbook-module .description-text {
-            font-size: 20px; /* Product description font size */
-            line-height: 1.6;
+        .content-module-1 .description-text {
+            font-size: 36px; /* Product description font size increased to 36px */
+            line-height: 1.8; /* Line height increased */
             word-break: keep-all;
             overflow-wrap: break-word;
             white-space: pre-wrap; /* Preserve whitespace and wrap */
         }
 
-        .lookbook-module .main-title span {
-            white-space: pre-wrap; /* Preserve whitespace and wrap for USP lines */
-        }
-
-        .lookbook-module .product-image-container {
+        .content-module-1 .product-image-container {
             position: relative;
             width: 100%;
-            padding-bottom: 120%; /* Example: 4:5 aspect ratio for vertical images */
+            padding-bottom: 125%; /* Image aspect ratio changed to 4:5 (125%) */
             overflow: hidden;
             background-color: #f0f0f0;
         }
-        .lookbook-module .product-image-container img {
+        .content-module-1 .product-image-container img {
             position: absolute;
             top: 0;
             left: 0;
@@ -159,7 +159,7 @@
         }
 
         /* Hide the bottom details for lookbook module as per request */
-        .lookbook-module .bottom-details {
+        .content-module-1 .bottom-details {
             display: none;
         }
 
@@ -171,10 +171,7 @@
 
         /* Ensure responsive behavior for smaller screens */
         @media (max-width: 1280px) {
-            .lookbook-module {
-                width: 100%; /* Make it fluid on smaller screens */
-                max-width: 1200px; /* Keep max-width for consistency */
-            }
+            /* No direct width change here, relies on JS transform now */
         }
 
         @media (max-width: 768px) {
@@ -217,7 +214,7 @@
             <div class="bg-white p-6 rounded-lg shadow-md mt-8">
                 <h2 class="text-2xl font-bold text-gray-800 mb-4">콘텐츠 작성 정보</h2>
 
-                <!-- Module 1 Inputs (Lookbook) -->
+                <!-- Module 1 Inputs (Content 1) -->
                 <div id="module1Inputs" class="content-input-section">
                     <div class="mb-4">
                         <label for="productSelect" class="block text-lg font-semibold text-gray-700 mb-2">상품 선택</label>
@@ -228,18 +225,11 @@
 
                     <div class="space-y-4">
                         <div class="input-group">
-                            <label for="uspLine1" class="block text-sm font-medium text-gray-700">USP (첫째 줄):</label>
+                            <label for="uspLine1" class="block text-sm font-medium text-gray-700">USP:</label>
                             <div class="flex items-center mt-1">
-                                <input type="text" id="uspLine1" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2" value="바쁜 아침, 한 벌로 스타일링 완성">
+                                <textarea id="uspLine1" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2 min-h-[60px]">바쁜 아침, 한 벌로 스타일링 완성
+세련된 플리츠 디자인으로 출근길을 더욱 여유롭게</textarea>
                                 <input type="color" id="uspLine1TextColor" value="#333333" class="color-square-input">
-                            </div>
-                        </div>
-
-                        <div class="input-group">
-                            <label for="uspLine2" class="block text-sm font-medium text-gray-700">USP (둘째 줄):</label>
-                            <div class="flex items-center mt-1">
-                                <input type="text" id="uspLine2" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2" value="세련된 플리츠 디자인으로 출근길을 더욱 여유롭게">
-                                <input type="color" id="uspLine2TextColor" value="#333333" class="color-square-input">
                             </div>
                         </div>
 
@@ -276,25 +266,38 @@
                 <button class="tab-button px-4 py-2 text-gray-600 font-semibold rounded-t-lg hover:bg-gray-100" data-tab="4">4</button>
             </div>
 
-            <div class="flex justify-end gap-2 mb-4">
-                <button class="update-button bg-green-600 text-white py-2 px-4 rounded-md font-semibold hover:bg-green-700 transition duration-300" id="updatePreview">업데이트</button>
-                <button class="copy-button bg-gray-700 text-white py-2 px-4 rounded-md font-semibold hover:bg-gray-800 transition duration-300" id="downloadContent">[다운로드]</button>
+            <!-- Combined Preview Scale and Action Buttons for horizontal alignment -->
+            <div class="flex justify-between items-center mb-4">
+                <!-- Preview Scale Input -->
+                <div class="input-group w-full max-w-xs mr-4"> <!-- Added mr-4 for spacing -->
+                    <label for="previewScale" class="block text-sm font-medium text-gray-700 mb-1">미리보기 배율:</label>
+                    <select id="previewScale" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2">
+                        <option value="1.0">100%</option>
+                        <option value="0.75" selected>75%</option>
+                        <option value="0.5">50%</option>
+                    </select>
+                </div>
+                <!-- Update and Download Buttons -->
+                <div class="flex gap-2">
+                    <button class="update-button bg-green-600 text-white py-2 px-4 rounded-md font-semibold hover:bg-green-700 transition duration-300" id="updatePreview">업데이트</button>
+                    <button class="copy-button bg-gray-700 text-white py-2 px-4 rounded-md font-semibold hover:bg-gray-800 transition duration-300" id="downloadContent">다운로드</button> <!-- Text changed to '다운로드' -->
+                </div>
             </div>
 
-            <!-- Content Display Area (Tabs Content) -->
-            <div id="contentDisplayArea" class="min-h-[400px] items-start">
-                <!-- Content for Tab 1 (Lookbook) -->
+            <!-- Content Display Area (Tabs Content) - Now a flex container for centering -->
+            <div id="contentDisplayArea" class="min-h-[400px] flex justify-center items-start">
+                <!-- Content for Tab 1 (Content 1 Module) -->
                 <div id="tabContent1" class="tab-content active w-full">
-                    <div class="lookbook-module" id="lookbookModule">
+                    <div class="content-module-1" id="content1Module">
                         <div class="main-title" id="displayMainTitle">
-                            <span id="displayUspLine1">바쁜 아침, 한 벌로 완성하는</span><br>
-                            <span id="displayUspLine2">세련된 플리츠 니트탑</span>
+                            바쁜 아침, 한 벌로 스타일링 완성
+세련된 플리츠 디자인으로 출근길을 여유롭게
                         </div>
                         <div class="description-text" id="displayDescription">
                             바쁜 아침에도 스타일링 고민 없이 완벽한 룩을 연출해 보세요. 유러피안 린넨 플리츠 니트탑은 세련된 플리츠 디자인으로 어떤 하의와도 잘 어울려 출근길을 더욱 여유롭고 특별하게 만들어 드립니다. 편안함과 스타일을 동시에 선사하는 이 니트탑으로 당신의 아침을 더욱 빛내세요.
                         </div>
                         <div class="product-image-container">
-                            <img id="displayProductImage" src="https://placehold.co/1200x1440/E0E0E0/333333?text=Product+Image" alt="유러피안 린넨 플리츠 니트탑">
+                            <img id="displayProductImage" src="https://placehold.co/1200x1500/E0E0E0/333333?text=Product+Image" alt="유러피안 린넨 플리츠 니트탑">
                         </div>
                     </div>
                 </div>
@@ -329,23 +332,21 @@
             const productInfoContainer = document.getElementById('productInfoContainer');
             const productSelect = document.getElementById('productSelect');
 
-            // Module 1 (Lookbook) Inputs
+            // Module 1 Inputs (Content 1)
             const module1Inputs = document.getElementById('module1Inputs');
             const uspLine1Input = document.getElementById('uspLine1');
-            const uspLine2Input = document.getElementById('uspLine2');
             const descriptionInput = document.getElementById('description');
             const productImageInput = document.getElementById('productImage');
             const lookbookBgColorInput = document.getElementById('lookbookBgColor');
             const uspLine1TextColorInput = document.getElementById('uspLine1TextColor');
-            const uspLine2TextColorInput = document.getElementById('uspLine2TextColor');
             const descriptionTextColorInput = document.getElementById('descriptionTextColor');
+            const previewScaleInput = document.getElementById('previewScale');
 
-            // Display elements for lookbook module (Module 1)
-            const displayUspLine1 = document.getElementById('displayUspLine1');
-            const displayUspLine2 = document.getElementById('displayUspLine2');
+            // Display elements for Content 1 Module
+            const displayMainTitle = document.getElementById('displayMainTitle');
             const displayDescription = document.getElementById('displayDescription');
             const displayProductImage = document.getElementById('displayProductImage');
-            const lookbookModule = document.getElementById('lookbookModule');
+            const content1Module = document.getElementById('content1Module');
 
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
@@ -389,6 +390,7 @@
             ];
 
             let selectedProductIndexModule1 = 0; // For module 1's product selection
+            const BASE_CONTENT_WIDTH = 1200; // Base width of the content module (for download)
 
             // --- Helper Functions ---
 
@@ -509,18 +511,27 @@
             }
 
             /**
-             * Updates the content and styling of the lookbook module (Module 1).
+             * Applies the selected preview scale to the content module.
              */
-            function updateLookbookModule() {
-                displayUspLine1.textContent = uspLine1Input.value;
-                displayUspLine2.textContent = uspLine2Input.value;
+            function applyPreviewScale() {
+                const scale = parseFloat(previewScaleInput.value);
+                content1Module.style.transform = `scale(${scale})`;
+                content1Module.style.transformOrigin = 'top left'; // Set origin for consistent scaling
+            }
+
+            /**
+             * Updates the content and styling of the Content 1 Module.
+             */
+            function updateContent1Module() {
+                displayMainTitle.textContent = uspLine1Input.value;
                 displayDescription.textContent = descriptionInput.value;
 
-                lookbookModule.style.backgroundColor = lookbookBgColorInput.value;
+                content1Module.style.backgroundColor = lookbookBgColorInput.value;
 
-                displayUspLine1.style.color = uspLine1TextColorInput.value;
-                displayUspLine2.style.color = uspLine2TextColorInput.value;
+                displayMainTitle.style.color = uspLine1TextColorInput.value;
                 displayDescription.style.color = descriptionTextColorInput.value;
+
+                applyPreviewScale(); // Apply scale after updating content
             }
 
             // --- Event Listeners ---
@@ -536,13 +547,12 @@
             });
 
             // Module 1 input listeners
-            lookbookBgColorInput.addEventListener('input', updateLookbookModule);
-            uspLine1Input.addEventListener('input', updateLookbookModule);
-            uspLine2Input.addEventListener('input', updateLookbookModule);
-            descriptionInput.addEventListener('input', updateLookbookModule);
-            uspLine1TextColorInput.addEventListener('input', updateLookbookModule);
-            uspLine2TextColorInput.addEventListener('input', updateLookbookModule);
-            descriptionTextColorInput.addEventListener('input', updateLookbookModule);
+            lookbookBgColorInput.addEventListener('input', updateContent1Module);
+            uspLine1Input.addEventListener('input', updateContent1Module);
+            descriptionInput.addEventListener('input', updateContent1Module);
+            uspLine1TextColorInput.addEventListener('input', updateContent1Module);
+            descriptionTextColorInput.addEventListener('input', updateContent1Module);
+            previewScaleInput.addEventListener('change', updateContent1Module); // Listen to scale changes
 
             // Main product selection dropdown change listener for Module 1
             productSelect.addEventListener('change', (e) => {
@@ -552,85 +562,86 @@
 
             // Right panel "업데이트" button - updates the currently active module (only Module 1 now)
             updatePreviewButton.addEventListener('click', () => {
-                // Only Module 1 is active, so always update it
-                updateLookbookModule();
+                updateContent1Module();
             });
 
             // Tab switching logic (now for all tabs, but only tab 1 has content)
             tabButtons.forEach(button => {
                 button.addEventListener('click', () => {
-                    // Deactivate all tab buttons
                     tabButtons.forEach(btn => btn.classList.remove('active'));
-                    // Hide all tab contents
                     tabContents.forEach(content => content.classList.add('hidden'));
 
-                    // Activate the clicked tab button
                     button.classList.add('active');
-                    // Show the corresponding tab content
                     const targetTabId = `tabContent${button.dataset.tab}`;
                     document.getElementById(targetTabId).classList.remove('hidden');
 
-                    // If switching to tab 1, update lookbook module
                     if (button.dataset.tab === '1') {
-                        // Ensure Module 1 inputs are visible (if they were ever hidden)
                         module1Inputs.classList.remove('hidden');
-                        updateLookbookModule();
+                        updateContent1Module();
                     } else {
-                        // For other tabs, hide Module 1 inputs if they were visible
                         module1Inputs.classList.add('hidden');
-                        // No specific update function for empty tabs, they just show placeholder text
                     }
                 });
             });
 
             // Image download functionality using html2canvas
-            downloadContentButton.addEventListener('click', function() {
-                // Determine which module to download based on the active tab
+            downloadContentButton.addEventListener('click', async function() {
                 const activeTabElement = document.querySelector('.tab-button.active');
                 let moduleToDownload = null;
 
                 if (activeTabElement.dataset.tab === '1') {
-                    moduleToDownload = lookbookModule;
+                    moduleToDownload = content1Module;
                 } else {
-                    // For tabs 2, 3, 4, there's no specific module to download,
-                    // so we might want to prevent download or download the placeholder.
-                    // For now, let's just show a message or download the placeholder div.
-                    showMessageBox('현재 선택된 탭은 미리보기 콘텐츠가 없습니다. 모듈 1만 다운로드 가능합니다.');
-                    return; // Prevent download for empty tabs
+                    showMessageBox('현재 선택된 탭은 미리보기 콘텐츠가 없습니다. 콘텐츠 1만 다운로드 가능합니다.');
+                    return;
                 }
 
                 downloadContentButton.style.display = 'none';
                 updatePreviewButton.style.display = 'none';
 
-                html2canvas(moduleToDownload, {
-                    scale: 2,
-                    useCORS: true,
-                    logging: false
-                }).then(function(canvas) {
-                    downloadContentButton.style.display = 'block';
-                    updatePreviewButton.style.display = 'block';
+                // Store current transform and origin
+                const currentTransform = moduleToDownload.style.transform;
+                const currentTransformOrigin = moduleToDownload.style.transformOrigin;
+
+                // Temporarily reset transform for capture at original size
+                moduleToDownload.style.transform = 'none';
+                moduleToDownload.style.transformOrigin = 'unset';
+
+                // Wait for DOM reflow to apply the transform reset
+                await new Promise(resolve => requestAnimationFrame(resolve));
+
+                try {
+                    const canvas = await html2canvas(moduleToDownload, {
+                        scale: 2, // Capture at a higher resolution for better quality
+                        useCORS: true,
+                        logging: false
+                    });
 
                     const imageDataURL = canvas.toDataURL('image/png');
                     const link = document.createElement('a');
                     link.href = imageDataURL;
-                    link.download = `product_content_tab_${activeTabElement.dataset.tab}.png`; // Include tab number in filename
+                    link.download = `product_content_tab_${activeTabElement.dataset.tab}.png`;
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
                     showMessageBox('콘텐츠 이미지가 저장되었습니다!');
-                }).catch(function(error) {
+                } catch (error) {
                     console.error('이미지 저장 중 오류 발생:', error);
+                    showMessageBox('이미지 저장에 실패했습니다. 다시 시도해주세요.');
+                } finally {
+                    // Restore original transform and origin
+                    moduleToDownload.style.transform = currentTransform;
+                    moduleToDownload.style.transformOrigin = currentTransformOrigin;
                     downloadContentButton.style.display = 'block';
                     updatePreviewButton.style.display = 'block';
-                    showMessageBox('이미지 저장에 실패했습니다. 다시 시도해주세요.');
-                });
+                }
             });
 
             // --- Initial Render ---
             renderProductInfoToggles();
-            renderProductSelectionDropdowns(); // Renders dropdown for Module 1
-            updateContentCreationInputsModule1(); // Initialize module 1 inputs
-            updateLookbookModule(); // Initial update for module 1 (default active)
+            renderProductSelectionDropdowns();
+            updateContentCreationInputsModule1();
+            updateContent1Module(); // Initial update for module 1 (default active)
         });
     </script>
 </body>
