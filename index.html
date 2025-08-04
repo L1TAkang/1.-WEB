@@ -134,6 +134,11 @@
             line-height: 1.6;
             word-break: keep-all;
             overflow-wrap: break-word;
+            white-space: pre-wrap; /* Preserve whitespace and wrap */
+        }
+
+        .lookbook-module .main-title span {
+            white-space: pre-wrap; /* Preserve whitespace and wrap for USP lines */
         }
 
         .lookbook-module .product-image-container {
@@ -196,9 +201,10 @@
     </style>
 </head>
 <body class="bg-gray-100 p-8 flex flex-col items-center min-h-screen">
-    <div class="flex flex-col md:flex-row w-full max-w-7xl gap-8">
-        <!-- Left Panel: Product Info & Content Creation Info -->
-        <div class="w-full md:w-1/3 space-y-6">
+    <!-- Adjusted max-width for the overall container to accommodate 1200px content + left panel -->
+    <div class="flex flex-col md:flex-row w-full gap-8" style="max-width: 1700px;">
+        <!-- Left Panel: Fixed width for md screens -->
+        <div class="flex-shrink-0 w-full md:w-[400px] space-y-6">
             <!-- 상품 정보 (Product Information) -->
             <div class="bg-white p-6 rounded-lg shadow-md">
                 <h2 class="text-2xl font-bold text-gray-800 mb-4">상품 정보</h2>
@@ -259,8 +265,8 @@
         </div>
 
         <!-- Right Panel: Content Preview -->
-        <!-- Adjusted max-width to accommodate 1200px content + padding for the overall layout -->
-        <div class="w-full md:w-2/3 bg-white p-6 rounded-lg shadow-md flex-shrink-0" style="max-width: 1260px;">
+        <!-- Flexible but with a min-width to ensure 1200px content fits -->
+        <div class="w-full bg-white p-6 rounded-lg shadow-md flex-grow" style="min-width: 1250px;">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">콘텐츠</h2>
             <!-- Content Layout Tabs -->
             <div class="flex border-b border-gray-200 mb-4">
@@ -276,7 +282,6 @@
             </div>
 
             <!-- Content Display Area (Tabs Content) -->
-            <!-- Removed overflow-x-auto, as parent will now accommodate full width -->
             <div id="contentDisplayArea" class="min-h-[400px] items-start">
                 <!-- Content for Tab 1 (Lookbook) -->
                 <div id="tabContent1" class="tab-content active w-full">
