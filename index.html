@@ -264,7 +264,9 @@
             <!-- Content Layout Tabs -->
             <div class="flex border-b border-gray-200 mb-4">
                 <button class="tab-button px-4 py-2 text-gray-600 font-semibold rounded-t-lg hover:bg-gray-100 active" data-tab="1">1</button>
-                <!-- Removed other tabs -->
+                <button class="tab-button px-4 py-2 text-gray-600 font-semibold rounded-t-lg hover:bg-gray-100" data-tab="2">2</button>
+                <button class="tab-button px-4 py-2 text-gray-600 font-semibold rounded-t-lg hover:bg-gray-100" data-tab="3">3</button>
+                <button class="tab-button px-4 py-2 text-gray-600 font-semibold rounded-t-lg hover:bg-gray-100" data-tab="4">4</button>
             </div>
 
             <div class="flex justify-end gap-2 mb-4">
@@ -273,7 +275,8 @@
             </div>
 
             <!-- Content Display Area (Tabs Content) -->
-            <div id="contentDisplayArea" class="border border-gray-300 p-4 rounded-md min-h-[400px] flex justify-center items-start">
+            <!-- Removed border and padding from contentDisplayArea to ensure lookbook-module is exactly 1200px visually -->
+            <div id="contentDisplayArea" class="min-h-[400px] flex justify-center items-start">
                 <!-- Content for Tab 1 (Lookbook) -->
                 <div id="tabContent1" class="tab-content active w-full">
                     <div class="lookbook-module" id="lookbookModule">
@@ -289,7 +292,18 @@
                         </div>
                     </div>
                 </div>
-                <!-- Removed other tab contents -->
+                <!-- Content for Tab 2 (Placeholder) -->
+                <div id="tabContent2" class="tab-content hidden w-full">
+                    <p class="text-gray-500 text-center py-10">콘텐츠 레이아웃 2</p>
+                </div>
+                <!-- Content for Tab 3 (Placeholder) -->
+                <div id="tabContent3" class="tab-content hidden w-full">
+                    <p class="text-gray-500 text-center py-10">콘텐츠 레이아웃 3</p>
+                </div>
+                <!-- Content for Tab 4 (Placeholder) -->
+                <div id="tabContent4" class="tab-content hidden w-full">
+                    <p class="text-gray-500 text-center py-10">콘텐츠 레이아웃 4</p>
+                </div>
             </div>
         </div>
     </div>
@@ -328,6 +342,7 @@
             const lookbookModule = document.getElementById('lookbookModule');
 
             const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
             const updatePreviewButton = document.getElementById('updatePreview');
             const downloadContentButton = document.getElementById('downloadContent');
 
@@ -531,30 +546,52 @@
 
             // Right panel "업데이트" button - updates the currently active module (only Module 1 now)
             updatePreviewButton.addEventListener('click', () => {
+                // Only Module 1 is active, so always update it
                 updateLookbookModule();
             });
 
-            // Tab switching logic (now only for Tab 1)
+            // Tab switching logic (now for all tabs, but only tab 1 has content)
             tabButtons.forEach(button => {
                 button.addEventListener('click', () => {
-                    // Deactivate all tab buttons (only one exists now, but good practice)
+                    // Deactivate all tab buttons
                     tabButtons.forEach(btn => btn.classList.remove('active'));
-                    // Hide all tab contents (only one exists now, but good practice)
-                    document.getElementById('tabContent1').classList.add('hidden'); // Ensure it's hidden before showing
+                    // Hide all tab contents
+                    tabContents.forEach(content => content.classList.add('hidden'));
 
                     // Activate the clicked tab button
                     button.classList.add('active');
                     // Show the corresponding tab content
-                    document.getElementById('tabContent1').classList.remove('hidden');
+                    const targetTabId = `tabContent${button.dataset.tab}`;
+                    document.getElementById(targetTabId).classList.remove('hidden');
 
-                    // Update lookbook when its tab is active
-                    updateLookbookModule();
+                    // If switching to tab 1, update lookbook module
+                    if (button.dataset.tab === '1') {
+                        // Ensure Module 1 inputs are visible (if they were ever hidden)
+                        module1Inputs.classList.remove('hidden');
+                        updateLookbookModule();
+                    } else {
+                        // For other tabs, hide Module 1 inputs if they were visible
+                        module1Inputs.classList.add('hidden');
+                        // No specific update function for empty tabs, they just show placeholder text
+                    }
                 });
             });
 
             // Image download functionality using html2canvas
             downloadContentButton.addEventListener('click', function() {
-                let moduleToDownload = lookbookModule; // Only Module 1 now
+                // Determine which module to download based on the active tab
+                const activeTabElement = document.querySelector('.tab-button.active');
+                let moduleToDownload = null;
+
+                if (activeTabElement.dataset.tab === '1') {
+                    moduleToDownload = lookbookModule;
+                } else {
+                    // For tabs 2, 3, 4, there's no specific module to download,
+                    // so we might want to prevent download or download the placeholder.
+                    // For now, let's just show a message or download the placeholder div.
+                    showMessageBox('현재 선택된 탭은 미리보기 콘텐츠가 없습니다. 모듈 1만 다운로드 가능합니다.');
+                    return; // Prevent download for empty tabs
+                }
 
                 downloadContentButton.style.display = 'none';
                 updatePreviewButton.style.display = 'none';
@@ -570,7 +607,7 @@
                     const imageDataURL = canvas.toDataURL('image/png');
                     const link = document.createElement('a');
                     link.href = imageDataURL;
-                    link.download = `product_content.png`; // Simplified filename
+                    link.download = `product_content_tab_${activeTabElement.dataset.tab}.png`; // Include tab number in filename
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
