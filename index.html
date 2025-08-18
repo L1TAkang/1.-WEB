@@ -3,1032 +3,282 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>상품 콘텐츠 자동생성기</title>
-    <!-- Pretendard 폰트 로드 -->
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-    <!-- Tailwind CSS CDN -->
+    <title>Yeoli Kim</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Pretendard (for Korean and English) -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <style>
-        /* Pretendard 폰트 적용 */
-        body {
+        /* 모든 요소에 Pretendard 폰트를 직접 적용합니다. */
+        body, h1, h2, h3, h4, h5, h6, p, a, span, div {
             font-family: 'Pretendard', sans-serif;
         }
-        /* Custom Message Box Styles */
-        .message-box-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            visibility: hidden; /* Hidden by default */
-            opacity: 0;
-            transition: visibility 0s, opacity 0.3s ease;
+        /* 스크롤 시 헤더에 가려지지 않도록 상단 여백을 추가합니다. */
+        section {
+            scroll-margin-top: 80px; /* 헤더 높이만큼 조절 */
         }
-
-        .message-box-overlay.show {
-            visibility: visible;
-            opacity: 1;
+        /* 모바일 메뉴 슬라이드 효과를 위한 CSS */
+        #mobile-menu-sidebar {
+            transition: transform 0.3s ease-in-out;
         }
-
-        .message-box-content {
-            background-color: #fff;
-            padding: 25px 30px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            max-width: 350px;
-            width: 90%;
-            transform: translateY(-20px);
-            transition: transform 0.3s ease;
-        }
-
-        .message-box-overlay.show .message-box-content {
-            transform: translateY(0);
-        }
-
-        .message-box-content p {
-            font-size: 16px;
-            color: #333;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
-        .message-box-content button {
-            background-color: #36474F;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-        }
-
-        .message-box-content button:hover {
-            background-color: #2a363d;
-        }
-
-        /* Toggle specific styles */
-        .toggle-header {
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 16px;
-            background-color: #f0f0f0;
-            border-radius: 8px;
-            font-weight: bold;
-            color: #333;
-            transition: background-color 0.2s ease;
-        }
-        .toggle-header:hover {
-            background-color: #e0e0e0;
-        }
-        .toggle-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-            padding: 0 16px;
-        }
-        .toggle-content.open {
-            max-height: 500px; /* Sufficiently large to show content */
-            padding: 16px;
-        }
-        .toggle-arrow {
-            transition: transform 0.3s ease;
-        }
-        .toggle-header.open .toggle-arrow {
-            transform: rotate(180deg);
-        }
-
-        /* Content Module 1 Specific Styles */
-        .content-module-1 {
-            width: 1200px; /* Base width for calculation and download */
-            background-color: #ffffff;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            gap: 80px; /* USP와 이미지 사이 간격을 더 넓게 조정 */
-            position: relative;
-            border: 2px solid #36474F;
-            padding: 100px 80px; /* 이미지에 맞춰 여백 조정 (상하 100px, 좌우 80px) */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            /* margin: 0 auto; removed, centering handled by parent flexbox */
-            /* transform will be applied by JS for preview scaling */
-            transform-origin: top left; /* Default origin for scaling */
-        }
-
-        .content-module-1 .main-title {
-            font-size: 70px; /* USP font size changed to 70px */
-            font-weight: bold;
-            line-height: 1.5; /* Line height increased */
-            margin-bottom: 0; /* Adjusted margin */
-            white-space: pre-wrap; /* Preserve whitespace and wrap */
-            text-align: left; /* Left-align USP text */
-        }
-
-        .content-module-1 .description-text {
-            font-size: 50px; /* Product description font size increased to 50px */
-            line-height: 1.8; /* Line height increased */
-            word-break: keep-all; /* 단어 잘림 허용하지 않음 (롤백) */
-            overflow-wrap: break-word;
-            white-space: pre-wrap; /* Preserve whitespace and wrap */
-            letter-spacing: -0.06em; /* 자간을 더 좁게 조정 */
-        }
-
-        .content-module-1 .product-image-container {
-            position: relative;
-            width: 100%;
-            padding-bottom: 125%; /* Image aspect ratio changed to 4:5 (125%) */
-            overflow: hidden;
-            background-color: #f0f0f0;
-        }
-        .content-module-1 .product-image-container img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        /* Hide the bottom details for lookbook module as per request */
-        .content-module-1 .bottom-details {
-            display: none;
-        }
-
-        /* Content Module 3 Specific Styles */
-        .content-module-3 {
-            width: 1200px; /* Base width for calculation and download */
-            background-color: #ffffff;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            gap: 80px; /* 타이틀명과 사진 간격 조정 */
-            position: relative;
-            border: 2px solid #36474F;
-            padding: 80px; /* Overall padding for module 3 */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transform-origin: top left; /* Default origin for scaling */
-        }
-
-        .content-module-3 .module-title-area {
-            text-align: center;
-        }
-
-        .content-module-3 .module-subtitle {
-            font-size: 40px;
-            font-weight: normal;
-            line-height: 1.4;
-            margin-bottom: 10px;
-            white-space: pre-wrap;
-        }
-
-        .content-module-3 .module-main-title {
-            font-size: 80px;
-            font-weight: bold;
-            line-height: 1.2;
-            white-space: pre-wrap;
-        }
-
-        .content-module-3 .grid-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px; /* 이미지 사이 간격을 좁게 조정 */
-            margin-bottom: 40px; /* Gap between grid and product list */
-        }
-
-        .content-module-3 .grid-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .content-module-3 .grid-image-container {
-            position: relative;
-            width: 100%;
-            padding-bottom: 125%; /* Aspect ratio 4:5 */
-            overflow: hidden;
-            background-color: #f0f0f0;
-            border-radius: 8px; /* Rounded corners for images */
-        }
-
-        .content-module-3 .grid-image-container img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .content-module-3 .product-list-area {
-            padding-top: 20px; /* Padding above the list */
-            border-top: 2px solid #eee; /* Separator line */
-            text-align: left; /* 전체 목록 왼쪽 정렬 */
-        }
-
-        .content-module-3 .product-list-area ol {
-            list-style: none; /* Remove default list style */
-            counter-reset: product-counter; /* Initialize counter */
-            padding-left: 0; /* Remove default padding */
-        }
-
-        .content-module-3 .product-list-area li {
-            counter-increment: product-counter; /* Increment counter */
-            font-size: 32px; /* Font size for product details */
-            line-height: 1.4;
-            white-space: pre-wrap;
-            word-break: keep-all;
-            margin-bottom: 15px; /* Spacing between list items */
-            padding-left: 40px; /* Space for custom number */
-            position: relative;
-        }
-
-        .content-module-3 .product-list-area li::before {
-            content: counter(product-counter) "."; /* Display counter */
-            position: absolute;
-            left: 0;
-            font-weight: bold;
-            color: currentColor; /* Inherit color from parent li */
-            width: 30px; /* Width for number */
-            text-align: left; /* 번호 왼쪽 정렬 */
-        }
-
-        .content-module-3 .product-list-area li strong {
-            font-weight: bold; /* 브랜드명 굵게 */
-        }
-
-        /* Active tab styling */
-        .tab-button.active {
-            background-color: #36474F;
-            color: #ffffff;
-        }
-
-        /* Ensure responsive behavior for smaller screens */
-        @media (max-width: 1280px) {
-            /* No direct width change here, relies on JS transform now */
-        }
-
-        @media (max-width: 768px) {
-            .main-title {
-                font-size: 28px !important; /* Adjust for mobile if needed */
-            }
-            .description-text {
-                font-size: 18px !important; /* Adjust for mobile if needed */
-            }
-            .content-module-3 .module-subtitle {
-                font-size: 24px;
-            }
-            .content-module-3 .module-main-title {
-                font-size: 40px;
-            }
-            .content-module-3 .grid-container {
-                grid-template-columns: 1fr; /* Single column on mobile */
-            }
-            .content-module-3 .product-list-area li {
-                font-size: 20px;
-                padding-left: 30px;
-            }
-            .content-module-3 .product-list-area li::before {
-                width: 20px;
-            }
-        }
-
-        /* Custom style for small square color input */
-        .color-square-input {
-            width: 32px; /* Fixed width for square */
-            height: 32px; /* Fixed height for square */
-            padding: 0; /* Remove padding to make it truly square */
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            cursor: pointer;
-            /* Ensure it aligns well with text input */
-            margin-left: 8px; /* Space between text input and color input */
-            flex-shrink: 0; /* Prevent shrinking */
+        #menu-overlay {
+            transition: opacity 0.3s ease-in-out;
         }
     </style>
 </head>
-<body class="bg-gray-100 p-8 flex flex-col items-center min-h-screen">
-    <!-- Adjusted max-width for the overall container to accommodate 1200px content + left panel -->
-    <div class="flex flex-col md:flex-row w-full gap-8" style="max-width: 1700px;">
-        <!-- Left Panel: Fixed width for md screens -->
-        <div class="flex-shrink-0 w-full md:w-[400px] space-y-6">
-            <!-- 상품 정보 (Product Information) -->
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h2 class="text-2xl font-bold text-gray-800 mb-4">상품 정보</h2>
-                <div id="productInfoContainer" class="space-y-4">
-                    <!-- Product info toggles will be rendered here by JS -->
-                </div>
+<body class="bg-white text-black">
+
+    <!-- Header Section -->
+    <header class="bg-white sticky top-0 z-50">
+        <nav class="w-full px-6 sm:px-8 md:px-12 py-6 flex justify-between items-center">
+            <!-- Website Title -->
+            <a href="#" class="text-2xl font-normal text-black">Yeoli Kim</a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#projects" class="text-xl text-black hover:text-gray-700 transition duration-300">Projects</a>
+                <a href="#about" class="text-xl text-black hover:text-gray-700 transition duration-300">About</a>
             </div>
 
-            <!-- 콘텐츠 작성 정보 (Content Creation Information) -->
-            <div class="bg-white p-6 rounded-lg shadow-md mt-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-4">콘텐츠 작성 정보</h2>
-
-                <!-- Module 1 Inputs (Content 1) -->
-                <div id="module1Inputs" class="content-input-section">
-                    <div class="mb-4">
-                        <label for="productSelect" class="block text-lg font-semibold text-gray-700 mb-2">상품 선택</label>
-                        <select id="productSelect" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2">
-                            <!-- Product selection options will be rendered here by JS -->
-                        </select>
-                    </div>
-
-                    <div class="space-y-4">
-                        <div class="input-group">
-                            <label for="uspLine1" class="block text-sm font-medium text-gray-700">USP:</label>
-                            <div class="flex items-center mt-1">
-                                <textarea id="uspLine1" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2 min-h-[60px]">바쁜 아침, 한 벌로 스타일링 완성
-세련된 플리츠 디자인으로 출근길을 더욱 여유롭게</textarea>
-                                <input type="color" id="uspLine1TextColor" value="#333333" class="color-square-input">
-                            </div>
-                        </div>
-
-                        <div class="input-group">
-                            <label for="description" class="block text-sm font-medium text-gray-700">콘텐츠 설명:</label>
-                            <div class="flex items-center mt-1">
-                                <textarea id="description" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2 min-h-[100px]">바쁜 아침에도 스타일링 고민 없이 완벽한 룩을 연출해 보세요. 유러피안 린넨 플리츠 니트탑은 세련된 플리츠 디자인으로 어떤 하의와도 잘 어울려 출근길을 더욱 여유롭고 특별하게 만들어 드립니다. 편안함과 스타일을 동시에 선사하는 이 니트탑으로 당신의 아침을 더욱 빛내세요.</textarea>
-                                <input type="color" id="descriptionTextColor" value="#333333" class="color-square-input">
-                            </div>
-                        </div>
-
-                        <div class="input-group">
-                            <label for="productImage" class="block text-sm font-medium text-gray-700">이미지 업로드:</label>
-                            <input type="file" id="productImage" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                        </div>
-                        <div class="input-group">
-                            <label for="lookbookBgColor" class="block text-sm font-medium text-gray-700">배경 색깔:</label>
-                            <input type="color" id="lookbookBgColor" value="#ffffff" class="mt-1 block w-full h-10 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-1">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Module 3 Inputs (Content 3) -->
-                <div id="module3Inputs" class="content-input-section hidden">
-                    <div class="space-y-4">
-                        <div class="input-group">
-                            <label for="module3Subtitle" class="block text-sm font-medium text-gray-700">타이틀 부연설명:</label>
-                            <div class="flex items-center mt-1">
-                                <textarea id="module3Subtitle" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2 min-h-[40px]">MD PICK</textarea>
-                                <input type="color" id="module3SubtitleColor" value="#333333" class="color-square-input">
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <label for="module3Title" class="block text-sm font-medium text-gray-700">타이틀명:</label>
-                            <div class="flex items-center mt-1">
-                                <textarea id="module3Title" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2 min-h-[60px]">지금 사면 좋을 특가 아이템</textarea>
-                                <input type="color" id="module3TitleColor" value="#333333" class="color-square-input">
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <label for="module3BgColor" class="block text-sm font-medium text-gray-700">배경 색깔:</label>
-                            <input type="color" id="module3BgColor" value="#ffffff" class="mt-1 block w-full h-10 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-1">
-                        </div>
-                    </div>
-
-                    <h3 class="text-xl font-bold text-gray-800 mt-6 mb-3">구역별 이미지 및 상품 선택</h3>
-                    <div class="space-y-6">
-                        <!-- Section A -->
-                        <div class="border border-gray-200 p-4 rounded-md">
-                            <h4 class="font-semibold text-gray-700 mb-2">구역 A</h4>
-                            <div class="mb-3">
-                                <label for="productSelectA" class="block text-sm font-medium text-gray-700">상품 선택:</label>
-                                <select id="productSelectA" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2">
-                                    <!-- Options will be populated by JS -->
-                                </select>
-                            </div>
-                            <div class="input-group">
-                                <label for="productImageA" class="block text-sm font-medium text-gray-700">이미지 업로드:</label>
-                                <input type="file" id="productImageA" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                            </div>
-                        </div>
-
-                        <!-- Section B -->
-                        <div class="border border-gray-200 p-4 rounded-md">
-                            <h4 class="font-semibold text-gray-700 mb-2">구역 B</h4>
-                            <div class="mb-3">
-                                <label for="productSelectB" class="block text-sm font-medium text-gray-700">상품 선택:</label>
-                                <select id="productSelectB" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2">
-                                    <!-- Options will be populated by JS -->
-                                </select>
-                            </div>
-                            <div class="input-group">
-                                <label for="productImageB" class="block text-sm font-medium text-gray-700">이미지 업로드:</label>
-                                <input type="file" id="productImageB" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                            </div>
-                        </div>
-
-                        <!-- Section C -->
-                        <div class="border border-gray-200 p-4 rounded-md">
-                            <h4 class="font-semibold text-gray-700 mb-2">구역 C</h4>
-                            <div class="mb-3">
-                                <label for="productSelectC" class="block text-sm font-medium text-gray-700">상품 선택:</label>
-                                <select id="productSelectC" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2">
-                                    <!-- Options will be populated by JS -->
-                                </select>
-                            </div>
-                            <div class="input-group">
-                                <label for="productImageC" class="block text-sm font-medium text-gray-700">이미지 업로드:</label>
-                                <input type="file" id="productImageC" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                            </div>
-                        </div>
-
-                        <!-- Section D -->
-                        <div class="border border-gray-200 p-4 rounded-md">
-                            <h4 class="font-semibold text-gray-700 mb-2">구역 D</h4>
-                            <div class="mb-3">
-                                <label for="productSelectD" class="block text-sm font-medium text-gray-700">상품 선택:</label>
-                                <select id="productSelectD" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2">
-                                    <!-- Options will be populated by JS -->
-                                </select>
-                            </div>
-                            <div class="input-group">
-                                <label for="productImageD" class="block text-sm font-medium text-gray-700">이미지 업로드:</label>
-                                <input type="file" id="productImageD" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="input-group mt-6">
-                        <label for="module3ProductListTextColor" class="block text-sm font-medium text-gray-700">상품 목록 폰트 색상:</label>
-                        <input type="color" id="module3ProductListTextColor" value="#333333" class="mt-1 block w-full h-10 rounded-md border-gray-300 shadow-sm p-1">
-                    </div>
-                </div>
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden">
+                <button id="menu-open-btn" type="button" class="text-black hover:text-gray-700 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 12h16"></path>
+                    </svg>
+                </button>
             </div>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu Sidebar -->
+    <div id="menu-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50"></div>
+    <div id="mobile-menu-sidebar" class="fixed top-0 right-0 h-full w-2/3 max-w-sm bg-white shadow-lg z-50 transform translate-x-full">
+        <div class="flex justify-end p-4">
+            <button id="menu-close-btn" class="text-black">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
         </div>
-
-        <!-- Right Panel: Content Preview -->
-        <!-- Flexible but with a min-width to ensure 1200px content fits -->
-        <div class="w-full bg-white p-6 rounded-lg shadow-md flex-grow" style="min-width: 1250px;">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">콘텐츠</h2>
-            <!-- Content Layout Tabs -->
-            <div class="flex border-b border-gray-200 mb-4">
-                <button class="tab-button px-4 py-2 text-gray-600 font-semibold rounded-t-lg hover:bg-gray-100 active" data-tab="1">1</button>
-                <button class="tab-button px-4 py-2 text-gray-600 font-semibold rounded-t-lg hover:bg-gray-100" data-tab="2">2</button>
-                <button class="tab-button px-4 py-2 text-gray-600 font-semibold rounded-t-lg hover:bg-gray-100" data-tab="3">3</button>
-                <button class="tab-button px-4 py-2 text-gray-600 font-semibold rounded-t-lg hover:bg-gray-100" data-tab="4">4</button>
-            </div>
-
-            <!-- Combined Preview Scale and Action Buttons for horizontal alignment -->
-            <div class="flex justify-between items-center mb-4">
-                <!-- Preview Scale Input -->
-                <div class="input-group w-full max-w-xs mr-4"> <!-- Added mr-4 for spacing -->
-                    <label for="previewScale" class="block text-sm font-medium text-gray-700 mb-1">미리보기 배율:</label>
-                    <select id="previewScale" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2">
-                        <option value="0.25">25%</option>
-                        <option value="0.5" selected>50%</option> <!-- 50%를 기본값으로 설정 -->
-                        <option value="0.75">75%</option>
-                        <option value="1.0">100%</option>
-                    </select>
-                </div>
-                <!-- Download Button Only -->
-                <div class="flex gap-2">
-                    <button class="copy-button bg-gray-700 text-white py-2 px-4 rounded-md font-semibold hover:bg-gray-800 transition duration-300" id="downloadContent">다운로드</button>
-                </div>
-            </div>
-
-            <!-- Content Display Area (Tabs Content) - Now a flex container for centering -->
-            <div id="contentDisplayArea" class="min-h-[400px] flex justify-center items-start">
-                <!-- Content for Tab 1 (Content 1 Module) -->
-                <div id="tabContent1" class="tab-content active w-full">
-                    <div class="content-module-1" id="content1Module">
-                        <div class="main-title" id="displayMainTitle">
-                            바쁜 아침, 한 벌로 스타일링 완성
-세련된 플리츠 디자인으로 출근길을 더욱 여유롭게
-                        </div>
-                        <div class="product-image-container">
-                            <img id="displayProductImage" src="https://placehold.co/1200x1500/E0E0E0/333333?text=Product+Image" alt="유러피안 린넨 플리츠 니트탑">
-                        </div>
-                        <div class="description-text" id="displayDescription">
-                            바쁜 아침에도 스타일링 고민 없이 완벽한 룩을 연출해 보세요. 유러피안 린넨 플리츠 니트탑은 세련된 플리츠 디자인으로 어떤 하의와도 잘 어울려 출근길을 더욱 여유롭고 특별하게 만들어 드립니다. 편안함과 스타일을 동시에 선사하는 이 니트탑으로 당신의 아침을 더욱 빛내세요.
-                        </div>
-                    </div>
-                </div>
-                <!-- Content for Tab 2 (Placeholder) -->
-                <div id="tabContent2" class="tab-content hidden w-full">
-                    <p class="text-gray-500 text-center py-10">콘텐츠 레이아웃 2</p>
-                </div>
-                <!-- Content for Tab 3 (Module 3) -->
-                <div id="tabContent3" class="tab-content hidden w-full">
-                    <div class="content-module-3" id="content3Module">
-                        <div class="module-title-area">
-                            <div class="module-subtitle" id="displayModule3Subtitle" style="color: #333333;">
-                                MD PICK
-                            </div>
-                            <div class="module-main-title" id="displayModule3Title" style="color: #333333;">
-                                지금 사면 좋을 특가 아이템
-                            </div>
-                        </div>
-                        <div class="grid-container">
-                            <div class="grid-item">
-                                <div class="grid-image-container">
-                                    <img id="displayProductImageA" src="https://placehold.co/400x500/A0A0A0/FFFFFF?text=Image+A" alt="Image A">
-                                </div>
-                            </div>
-                            <div class="grid-item">
-                                <div class="grid-image-container">
-                                    <img id="displayProductImageB" src="https://placehold.co/400x500/A0A0A0/FFFFFF?text=Image+B" alt="Image B">
-                                </div>
-                            </div>
-                            <div class="grid-item">
-                                <div class="grid-image-container">
-                                    <img id="displayProductImageC" src="https://placehold.co/400x500/A0A0A0/FFFFFF?text=Image+C" alt="Image C">
-                                </div>
-                            </div>
-                            <div class="grid-item">
-                                <div class="grid-image-container">
-                                    <img id="displayProductImageD" src="https://placehold.co/400x500/A0A0A0/FFFFFF?text=Image+D" alt="Image D">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="product-list-area">
-                            <ol id="displayProductList">
-                                <!-- Product list items will be rendered here by JS -->
-                            </ol>
-                        </div>
-                    </div>
-                </div>
-                <!-- Content for Tab 4 (Placeholder) -->
-                <div id="tabContent4" class="tab-content hidden w-full">
-                    <p class="text-gray-500 text-center py-10">콘텐츠 레이아웃 4</p>
-                </div>
-            </div>
-        </div>
+        <nav class="flex flex-col items-start p-6 space-y-4">
+            <a href="#projects" class="text-lg text-black hover:text-gray-700">Projects</a>
+            <a href="#about" class="text-lg text-black hover:text-gray-700">About</a>
+        </nav>
     </div>
 
-    <!-- Custom Message Box HTML -->
-    <div id="messageBoxOverlay" class="message-box-overlay">
-        <div class="message-box-content">
-            <p id="messageBoxText"></p>
-            <button id="messageBoxCloseButton">확인</button>
+
+    <!-- Main Content Section -->
+    <main class="flex items-center justify-start text-left px-6 sm:px-8 md:px-12 pt-24 md:pt-32 pb-16 md:pb-20">
+        <div class="max-w-2xl flex flex-col items-start">
+            <!-- Profile Image -->
+            <img src="https://raw.githubusercontent.com/L1TAkang/1.-WEB/main/profile.png" 
+                 alt="Profile Image" 
+                 class="w-40 h-40 rounded-full object-cover mb-6"
+                 onerror="this.onerror=null;this.src='https://placehold.co/160x160/e2e8f0/333?text=Profile';">
+            
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-light leading-snug md:leading-snug lg:leading-tight mb-6">
+                솔로 프리너를 꿈꾸는 여리입니다. <br>늘 새로운 툴에 호기심이 많습니다.
+            </h1>
+
+            <!-- Resume Button -->
+            <a href="https://l1takang.github.io/1.-WEB/resume.pdf" download="resume.pdf" class="inline-block bg-gray-200 text-black px-6 py-3 text-xl rounded-full hover:bg-gray-300 transition-colors">
+                Resume
+            </a>
         </div>
-    </div>
+    </main>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // --- DOM Elements ---
-            const productInfoContainer = document.getElementById('productInfoContainer');
-            const productSelect = document.getElementById('productSelect'); // Module 1 product select
-
-            // Module 1 Inputs (Content 1)
-            const module1Inputs = document.getElementById('module1Inputs');
-            const uspLine1Input = document.getElementById('uspLine1');
-            const descriptionInput = document.getElementById('description');
-            const productImageInput = document.getElementById('productImage');
-            const lookbookBgColorInput = document.getElementById('lookbookBgColor');
-            const uspLine1TextColorInput = document.getElementById('uspLine1TextColor');
-            const descriptionTextColorInput = document.getElementById('descriptionTextColor');
-            const previewScaleInput = document.getElementById('previewScale');
-
-            // Display elements for Content 1 Module
-            const displayMainTitle = document.getElementById('displayMainTitle');
-            const displayDescription = document.getElementById('displayDescription');
-            const displayProductImage = document.getElementById('displayProductImage');
-            const content1Module = document.getElementById('content1Module');
-
-            // Module 3 Inputs (Content 3)
-            const module3Inputs = document.getElementById('module3Inputs');
-            const module3SubtitleInput = document.getElementById('module3Subtitle');
-            const module3TitleInput = document.getElementById('module3Title');
-            const module3BgColorInput = document.getElementById('module3BgColor');
-            const module3SubtitleColorInput = document.getElementById('module3SubtitleColor');
-            const module3TitleColorInput = document.getElementById('module3TitleColor');
-
-            const productSelectA = document.getElementById('productSelectA');
-            const productImageAInput = document.getElementById('productImageA');
-            const productSelectB = document.getElementById('productSelectB');
-            const productImageBInput = document.getElementById('productImageB');
-            const productSelectC = document.getElementById('productSelectC');
-            const productImageCInput = document.getElementById('productImageC');
-            const productSelectD = document.getElementById('productSelectD');
-            const productImageDInput = document.getElementById('productImageD');
-            const module3ProductListTextColorInput = document.getElementById('module3ProductListTextColor');
-
-            // Display elements for Content 3 Module
-            const content3Module = document.getElementById('content3Module');
-            const displayModule3Subtitle = document.getElementById('displayModule3Subtitle');
-            const displayModule3Title = document.getElementById('displayModule3Title');
-            const displayProductImageA = document.getElementById('displayProductImageA');
-            const displayProductImageB = document.getElementById('displayProductImageB');
-            const displayProductImageC = document.getElementById('displayProductImageC');
-            const displayProductImageD = document.getElementById('displayProductImageD');
-            const displayProductList = document.getElementById('displayProductList');
-
-
-            const tabButtons = document.querySelectorAll('.tab-button');
-            const tabContents = document.querySelectorAll('.tab-content');
-            const downloadContentButton = document.getElementById('downloadContent');
-
-            const messageBoxOverlay = document.getElementById('messageBoxOverlay');
-            const messageBoxText = document.getElementById('messageBoxText');
-            const messageBoxCloseButton = document.getElementById('messageBoxCloseButton');
-
-            // --- Data Storage ---
-            let products = [
-                {
-                    brandName: '아뜰리에 마졸리',
-                    productName: '유러피안 린넨 플리츠 니트탑',
-                    price: '15,960원',
-                    discountRate: '60%',
-                    productInfo: '유러피안 린넨 플리츠 니트탑은 세련된 플리츠 디자인으로 어떤 하의와도 잘 어울려 출근길을 더욱 여유롭고 특별하게 만들어 드립니다. 편안함과 스타일을 동시에 선사하는 이 니트탑으로 당신의 아침을 더욱 빛내세요.'
-                },
-                {
-                    brandName: '브랜드B',
-                    productName: '상품B',
-                    price: '25,000원',
-                    discountRate: '10%',
-                    productInfo: '상품B에 대한 상세 정보입니다. 이 상품은 매우 좋습니다.'
-                },
-                {
-                    brandName: '브랜드C',
-                    productName: '상품C',
-                    price: '30,000원',
-                    discountRate: '20%',
-                    productInfo: '상품C에 대한 상세 정보입니다. 특별한 기능을 가지고 있습니다.'
-                },
-                {
-                    brandName: '브랜드D',
-                    productName: '상품D',
-                    price: '45,000원',
-                    discountRate: '5%',
-                    productInfo: '상품D에 대한 상세 정보입니다. 마지막 상품입니다.'
-                }
-            ];
-
-            let selectedProductIndexModule1 = 0; // For module 1's product selection
-            let selectedProductIndexA = 0; // For module 3, section A
-            let selectedProductIndexB = 1; // For module 3, section B (default to different product for demo)
-            let selectedProductIndexC = 2; // For module 3, section C
-            let selectedProductIndexD = 3; // For module 3, section D
-
-            const BASE_CONTENT_WIDTH = 1200; // Base width of the content module (for download)
-
-            // --- Helper Functions ---
-
-            /**
-             * Shows a custom message box with the given message.
-             * @param {string} message - The message to display.
-             */
-            function showMessageBox(message) {
-                messageBoxText.textContent = message;
-                messageBoxOverlay.classList.add('show');
-            }
-
-            // Closes the custom message box.
-            messageBoxCloseButton.addEventListener('click', function() {
-                messageBoxOverlay.classList.remove('show');
-            });
-
-            /**
-             * Renders the product information toggles in the left panel.
-             */
-            function renderProductInfoToggles() {
-                productInfoContainer.innerHTML = '';
-                products.forEach((product, index) => {
-                    const toggleDiv = document.createElement('div');
-                    toggleDiv.classList.add('border', 'border-gray-300', 'rounded-lg', 'overflow-hidden');
-
-                    const toggleHeader = document.createElement('div');
-                    toggleHeader.classList.add('toggle-header');
-                    toggleHeader.innerHTML = `
-                        <span>상품 정보 ${index + 1}</span>
-                        <span class="toggle-arrow">&#9660;</span>
-                    `;
-                    toggleHeader.addEventListener('click', () => toggleProductInfo(index));
-
-                    const toggleContent = document.createElement('div');
-                    toggleContent.classList.add('toggle-content', 'space-y-3', 'bg-gray-50');
-                    toggleContent.id = `productToggleContent${index}`;
-                    toggleContent.innerHTML = `
-                        <div class="input-group">
-                            <label for="brandName${index}" class="block text-sm font-medium text-gray-700">브랜드명:</label>
-                            <input type="text" id="brandName${index}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" value="${product.brandName}">
-                        </div>
-                        <div class="input-group">
-                            <label for="productName${index}" class="block text-sm font-medium text-gray-700">상품명:</label>
-                            <input type="text" id="productName${index}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" value="${product.productName}">
-                        </div>
-                        <div class="input-group">
-                            <label for="price${index}" class="block text-sm font-medium text-gray-700">가격:</label>
-                            <input type="text" id="price${index}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" value="${product.price}">
-                        </div>
-                        <div class="input-group">
-                            <label for="discountRate${index}" class="block text-sm font-medium text-gray-700">할인율:</label>
-                            <input type="text" id="discountRate${index}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" value="${product.discountRate}">
-                        </div>
-                        <div class="input-group">
-                            <label for="productInfo${index}" class="block text-sm font-medium text-gray-700">상품정보:</label>
-                            <textarea id="productInfo${index}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 min-h-[80px]">${product.productInfo}</textarea>
-                        </div>
-                    `;
-
-                    toggleDiv.appendChild(toggleHeader);
-                    toggleDiv.appendChild(toggleContent);
-                    productInfoContainer.appendChild(toggleDiv);
-
-                    toggleContent.querySelectorAll('input, textarea').forEach(input => {
-                        input.addEventListener('input', (e) => {
-                            const fieldName = e.target.id.replace(`${index}`, '');
-                            products[index][fieldName] = e.target.value;
-                            renderProductSelectionDropdowns();
-                        });
-                    });
-                });
-            }
-
-            /**
-             * Toggles the visibility of a product information section.
-             * @param {number} index - The index of the product section to toggle.
-             */
-            function toggleProductInfo(index) {
-                const content = document.getElementById(`productToggleContent${index}`);
-                const header = content.previousElementSibling;
-                if (content.classList.contains('open')) {
-                    content.classList.remove('open');
-                    header.classList.remove('open');
-                } else {
-                    document.querySelectorAll('.toggle-content.open').forEach(openContent => {
-                        openContent.classList.remove('open');
-                        openContent.previousElementSibling.classList.remove('open');
-                    });
-                    content.classList.add('open');
-                    header.classList.add('open');
-                }
-            }
-
-            /**
-             * Renders product selection dropdowns for Module 1 and Module 3 sections.
-             */
-            function renderProductSelectionDropdowns() {
-                // For Module 1
-                productSelect.innerHTML = '';
-                products.forEach((product, index) => {
-                    const option = document.createElement('option');
-                    option.value = index;
-                    option.textContent = `상품 ${index + 1} (${product.productName || '이름 없음'})`;
-                    if (index === selectedProductIndexModule1) {
-                        option.selected = true;
-                    }
-                    productSelect.appendChild(option);
-                });
-
-                // For Module 3 sections (A, B, C, D)
-                [productSelectA, productSelectB, productSelectC, productSelectD].forEach((selectElement, sectionIndex) => {
-                    selectElement.innerHTML = '';
-                    products.forEach((product, index) => {
-                        const option = document.createElement('option');
-                        option.value = index;
-                        option.textContent = `상품 ${index + 1} (${product.productName || '이름 없음'})`;
-                        // Set selected based on the specific section's selected index
-                        if (sectionIndex === 0 && index === selectedProductIndexA) {
-                            option.selected = true;
-                        } else if (sectionIndex === 1 && index === selectedProductIndexB) {
-                            option.selected = true;
-                        } else if (sectionIndex === 2 && index === selectedProductIndexC) {
-                            option.selected = true;
-                        } else if (sectionIndex === 3 && index === selectedProductIndexD) {
-                            option.selected = true;
-                        }
-                        selectElement.appendChild(option);
-                    });
-                });
-            }
-
-            /**
-             * Updates the content creation input fields based on the selected product for Module 1.
-             */
-            function updateContentCreationInputsModule1() {
-                const selectedProduct = products[selectedProductIndexModule1];
-                // No auto-fill for USP/description/image, as user wants to control these directly.
-            }
-
-            /**
-             * Applies the selected preview scale to the content module.
-             */
-            function applyPreviewScale() {
-                const scale = parseFloat(previewScaleInput.value);
-                // Apply scale to currently active module
-                const activeTabElement = document.querySelector('.tab-button.active');
-                if (activeTabElement.dataset.tab === '1') {
-                    content1Module.style.transform = `scale(${scale})`;
-                    content1Module.style.transformOrigin = 'top left';
-                } else if (activeTabElement.dataset.tab === '3') {
-                    content3Module.style.transform = `scale(${scale})`;
-                    content3Module.style.transformOrigin = 'top left';
-                }
-            }
-
-            /**
-             * Updates the content and styling of the Content 1 Module.
-             */
-            function updateContent1Module() {
-                displayMainTitle.textContent = uspLine1Input.value;
-                displayDescription.textContent = descriptionInput.value;
-
-                content1Module.style.backgroundColor = lookbookBgColorInput.value;
-
-                displayMainTitle.style.color = uspLine1TextColorInput.value;
-                displayDescription.style.color = descriptionTextColorInput.value;
-
-                applyPreviewScale(); // Apply scale after updating content
-            }
-
-            /**
-             * Updates the content and styling of the Content 3 Module.
-             */
-            function updateContent3Module() {
-                displayModule3Subtitle.textContent = module3SubtitleInput.value;
-                displayModule3Title.textContent = module3TitleInput.value;
-                content3Module.style.backgroundColor = module3BgColorInput.value;
-
-                displayModule3Subtitle.style.color = module3SubtitleColorInput.value;
-                displayModule3Title.style.color = module3TitleColorInput.value;
-
-                // Update product images for each section
-                const updateImage = (displayImageEl, inputEl) => {
-                    // If a file is selected, use it. Otherwise, use placeholder.
-                    if (inputEl.files && inputEl.files[0]) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            displayImageEl.src = e.target.result;
-                        };
-                        reader.readAsDataURL(inputEl.files[0]);
-                    } else {
-                        // Default placeholder images
-                        const sectionLetter = displayImageEl.id.replace('displayProductImage', '');
-                        displayImageEl.src = `https://placehold.co/400x500/A0A0A0/FFFFFF?text=Image+${sectionLetter}`;
-                    }
-                };
-
-                updateImage(displayProductImageA, productImageAInput);
-                updateImage(displayProductImageB, productImageBInput);
-                updateImage(displayProductImageC, productImageCInput);
-                updateImage(displayProductImageD, productImageDInput);
-
-                // Update product list at the bottom
-                displayProductList.innerHTML = ''; // Clear previous list items
-                const selectedProductIndices = [selectedProductIndexA, selectedProductIndexB, selectedProductIndexC, selectedProductIndexD];
+    <!-- Projects Section -->
+    <section id="projects" class="bg-white text-black px-6 sm:px-8 md:px-12 py-16">
+        <div>
+            <h2 class="text-2xl font-normal italic mb-12">Recent Projects</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                 
-                selectedProductIndices.forEach((index, i) => {
-                    const product = products[index];
-                    if (product) {
-                        const listItem = document.createElement('li');
-                        // Make brand name bold
-                        listItem.innerHTML = `<strong>${product.brandName}</strong> | ${product.productName} ${product.discountRate} ${product.price}`;
-                        listItem.style.color = module3ProductListTextColorInput.value;
-                        displayProductList.appendChild(listItem);
-                    }
-                });
+                <!-- Project 1 (Left, Tall) -->
+                <div class="flex flex-col">
+                    <div class="relative h-[49rem] overflow-hidden group">
+                        <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=1974&auto=format&fit=crop" alt="Project 1 Image" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-black bg-opacity-70 flex flex-col items-start justify-between p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <div>
+                                <h3 class="text-3xl font-semibold text-white">Brand Identity Design</h3>
+                                <p class="text-xl text-gray-300 mb-4">2024</p>
+                                <p class="text-xl text-white">신규 뷰티 브랜드를 위한 로고, 패키지, 비주얼 아이덴티티 시스템을 구축했습니다.</p>
+                            </div>
+                            <a href="#project-1-detail" data-weblink="project-1.html" class="project-link text-xl text-white self-end underline hover:text-gray-300 transition-colors">More →</a>
+                        </div>
+                    </div>
+                </div>
 
-                applyPreviewScale(); // Apply scale after updating content
-            }
+                <!-- Right Column Wrapper -->
+                <div class="flex flex-col gap-4">
+                    <!-- Project 2 (Top Right) -->
+                    <div class="flex flex-col">
+                        <div class="relative h-[24rem] overflow-hidden group">
+                            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop" alt="Project 2 Image" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+                             <div class="absolute inset-0 bg-black bg-opacity-70 flex flex-col items-start justify-between p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div>
+                                    <h3 class="text-3xl font-semibold text-white">Web App Development</h3>
+                                    <p class="text-xl text-gray-300 mb-4">2023</p>
+                                    <p class="text-xl text-white">여행 계획 서비스를 위한 반응형 웹 애플리케이션의 프론트엔드 개발을 담당했습니다.</p>
+                                </div>
+                                <a href="#project-2-detail" data-weblink="project-2.html" class="project-link text-xl text-white self-end underline hover:text-gray-300 transition-colors">More →</a>
+                            </div>
+                        </div>
+                    </div>
 
-            // --- Event Listeners ---
-            productImageInput.addEventListener('change', function(event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        displayProductImage.src = e.target.result;
-                    };
-                    reader.readAsDataURL(file);
+                    <!-- Project 3 (Bottom Right) -->
+                    <div class="flex flex-col">
+                        <div class="relative h-[24rem] overflow-hidden group">
+                            <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1974&auto=format&fit=crop" alt="Project 3 Image" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+                             <div class="absolute inset-0 bg-black bg-opacity-70 flex flex-col items-start justify-between p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div>
+                                    <h3 class="text-3xl font-semibold text-white">Mobile UI/UX Redesign</h3>
+                                    <p class="text-xl text-gray-300 mb-4">2022</p>
+                                    <p class="text-xl text-white">기존 커머스 앱의 사용자 경험을 개선하기 위해 전체 UI/UX 리디자인을 진행했습니다.</p>
+                                </div>
+                                <a href="#project-3-detail" data-weblink="project-3.html" class="project-link text-xl text-white self-end underline hover:text-gray-300 transition-colors">More →</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Mobile Project Details -->
+            <div id="project-details-mobile" class="md:hidden mt-12 space-y-10">
+                <div id="project-1-detail" class="hidden project-detail-content p-6 bg-gray-100 rounded">
+                    <h3 class="text-2xl font-bold mb-2">Brand Identity Design</h3>
+                    <p class="text-gray-600 mb-4">Full details about Brand Identity Design project...</p>
+                </div>
+                <div id="project-2-detail" class="hidden project-detail-content p-6 bg-gray-100 rounded">
+                    <h3 class="text-2xl font-bold mb-2">Web App Development</h3>
+                    <p class="text-gray-600 mb-4">Full details about Web App Development project...</p>
+                </div>
+                <div id="project-3-detail" class="hidden project-detail-content p-6 bg-gray-100 rounded">
+                    <h3 class="text-2xl font-bold mb-2">Mobile UI/UX Redesign</h3>
+                    <p class="text-gray-600 mb-4">Full details about Mobile UI/UX Redesign project...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- About Section -->
+    <section id="about" class="bg-black text-white px-6 sm:px-8 md:px-12 py-24">
+        <div>
+            <div class="w-full max-w-4xl">
+                <!-- Work Experience -->
+                <div class="mb-16">
+                    <h3 class="text-xl italic text-gray-400 mb-4">Work experience</h3>
+                    <div class="pl-4 space-y-10 text-xl">
+                        <div>
+                            <h4 class="font-semibold">Creative Studio</h4>
+                            <p class="text-gray-400">2021 - Present</p>
+                            <p class="leading-relaxed mt-3">
+                                다양한 클라이언트의 브랜딩 및 웹사이트 구축 프로젝트에 참여하여 디자인과 개발을 담당하고 있습니다.
+                            </p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Design Agency</h4>
+                            <p class="text-gray-400">2019 - 2021</p>
+                            <p class="leading-relaxed mt-3">
+                                주니어 디자이너로 근무하며 다수의 그래픽 디자인 및 편집 디자인 프로젝트를 수행했습니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Education -->
+                <div class="mb-16">
+                    <h3 class="text-xl italic text-gray-400 mb-4">Education</h3>
+                    <div class="pl-4 text-xl">
+                        <div>
+                            <p class="font-semibold">한국 디자인 대학교 / 디지털미디어디자인</p>
+                            <p class="text-gray-300">2015 - 2019</p>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- Skills -->
+                <div>
+                    <h3 class="text-xl italic text-gray-400 mb-4">Skills</h3>
+                    <div class="pl-4">
+                        <div class="text-xl space-y-3">
+                            <p># UI/UX Design</p>
+                            <p># Frontend Development</p>
+                            <p># Brand Strategy</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const openBtn = document.getElementById('menu-open-btn');
+        const closeBtn = document.getElementById('menu-close-btn');
+        const sidebar = document.getElementById('mobile-menu-sidebar');
+        const overlay = document.getElementById('menu-overlay');
+
+        function openMenu() {
+            sidebar.classList.remove('translate-x-full');
+            overlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent background scroll
+        }
+
+        function closeMenu() {
+            sidebar.classList.add('translate-x-full');
+            overlay.classList.add('hidden');
+            document.body.style.overflow = ''; // Restore background scroll
+        }
+
+        openBtn.addEventListener('click', openMenu);
+        closeBtn.addEventListener('click', closeMenu);
+        overlay.addEventListener('click', closeMenu);
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                if (this.classList.contains('project-link')) return; // project-link는 별도 처리
+                e.preventDefault();
+                closeMenu(); 
+                const targetElement = document.querySelector(this.getAttribute('href'));
+                if(targetElement) {
+                    setTimeout(() => {
+                         targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }, 300);
                 }
             });
+        });
 
-            // Generic image upload handler for Module 3 sections
-            const handleModule3ImageUpload = (inputElement) => {
-                inputElement.addEventListener('change', updateContent3Module); // Just call updateContent3Module
-            };
+        // Project link click handler
+        document.querySelectorAll('.project-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (window.innerWidth < 768) { // Mobile view
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
 
-            handleModule3ImageUpload(productImageAInput);
-            handleModule3ImageUpload(productImageBInput);
-            handleModule3ImageUpload(productImageCInput);
-            handleModule3ImageUpload(productImageDInput);
+                    // 이미 열려있는지 확인
+                    const isAlreadyOpen = !targetElement.classList.contains('hidden');
 
-
-            // Module 1 input listeners
-            lookbookBgColorInput.addEventListener('input', updateContent1Module);
-            uspLine1Input.addEventListener('input', updateContent1Module);
-            descriptionInput.addEventListener('input', updateContent1Module);
-            uspLine1TextColorInput.addEventListener('input', updateContent1Module);
-            descriptionTextColorInput.addEventListener('input', updateContent1Module);
-            previewScaleInput.addEventListener('change', applyPreviewScale); // Listen to scale changes for any active module
-
-            // Main product selection dropdown change listener for Module 1
-            productSelect.addEventListener('change', (e) => {
-                selectedProductIndexModule1 = parseInt(e.target.value);
-                updateContentCreationInputsModule1();
-                updateContent1Module(); // Update Module 1 display immediately
-            });
-
-            // Module 3 input listeners
-            module3SubtitleInput.addEventListener('input', updateContent3Module);
-            module3TitleInput.addEventListener('input', updateContent3Module);
-            module3BgColorInput.addEventListener('input', updateContent3Module);
-            module3SubtitleColorInput.addEventListener('input', updateContent3Module);
-            module3TitleColorInput.addEventListener('input', updateContent3Module);
-            module3ProductListTextColorInput.addEventListener('input', updateContent3Module); // New listener for product list text color
-
-            // Module 3 product selection listeners
-            productSelectA.addEventListener('change', (e) => { selectedProductIndexA = parseInt(e.target.value); updateContent3Module(); });
-            productSelectB.addEventListener('change', (e) => { selectedProductIndexB = parseInt(e.target.value); updateContent3Module(); });
-            productSelectC.addEventListener('change', (e) => { selectedProductIndexC = parseInt(e.target.value); updateContent3Module(); });
-            productSelectD.addEventListener('change', (e) => { selectedProductIndexD = parseInt(e.target.value); updateContent3Module(); });
-
-
-            // Tab switching logic
-            tabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    tabButtons.forEach(btn => btn.classList.remove('active'));
-                    tabContents.forEach(content => content.classList.add('hidden'));
-                    document.querySelectorAll('.content-input-section').forEach(section => section.classList.add('hidden')); // Hide all input sections
-
-                    button.classList.add('active');
-                    const targetTabId = `tabContent${button.dataset.tab}`;
-                    document.getElementById(targetTabId).classList.remove('hidden');
-
-                    // Show relevant input section and update module
-                    if (button.dataset.tab === '1') {
-                        module1Inputs.classList.remove('hidden');
-                        updateContent1Module();
-                    } else if (button.dataset.tab === '3') {
-                        module3Inputs.classList.remove('hidden');
-                        updateContent3Module();
-                    }
-                    // Tab 2 and 4 are placeholders, no specific inputs to show/hide
-                });
-            });
-
-            // Image download functionality using html2canvas
-            downloadContentButton.addEventListener('click', async function() {
-                const activeTabElement = document.querySelector('.tab-button.active');
-                let moduleToDownload = null;
-
-                if (activeTabElement.dataset.tab === '1') {
-                    moduleToDownload = content1Module;
-                } else if (activeTabElement.dataset.tab === '3') {
-                    moduleToDownload = content3Module;
-                } else {
-                    showMessageBox('현재 선택된 탭은 미리보기 콘텐츠가 없습니다. 콘텐츠 1 또는 3만 다운로드 가능합니다.');
-                    return;
-                }
-
-                downloadContentButton.style.display = 'none';
-
-                // Store current transform and origin
-                const currentTransform = moduleToDownload.style.transform;
-                const currentTransformOrigin = moduleToDownload.style.transformOrigin;
-
-                // Temporarily reset transform for capture at original size
-                moduleToDownload.style.transform = 'none';
-                moduleToDownload.style.transformOrigin = 'unset';
-
-                // Wait for DOM reflow to apply the transform reset
-                await new Promise(resolve => requestAnimationFrame(resolve));
-
-                try {
-                    const canvas = await html2canvas(moduleToDownload, {
-                        scale: 2, // Capture at a higher resolution for better quality
-                        useCORS: true,
-                        logging: false
+                    // 모든 상세 설명 숨기기
+                    document.querySelectorAll('.project-detail-content').forEach(detail => {
+                        detail.classList.add('hidden');
                     });
 
-                    const imageDataURL = canvas.toDataURL('image/png');
-                    const link = document.createElement('a');
-                    link.href = imageDataURL;
-                    link.download = `product_content_tab_${activeTabElement.dataset.tab}.png`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    showMessageBox('콘텐츠 이미지가 저장되었습니다!');
-                } catch (error) {
-                    console.error('이미지 저장 중 오류 발생:', error);
-                    showMessageBox('이미지 저장에 실패했습니다. 다시 시도해주세요.');
-                } finally {
-                    // Restore original transform and origin
-                    moduleToDownload.style.transform = currentTransform;
-                    moduleToDownload.style.transformOrigin = currentTransformOrigin;
-                    downloadContentButton.style.display = 'block';
+                    // 클릭한 것이 닫혀 있었다면 열기
+                    if (!isAlreadyOpen && targetElement) {
+                        targetElement.classList.remove('hidden');
+                        setTimeout(() => {
+                            targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 100);
+                    }
+                } else { // Desktop view
+                    e.preventDefault();
+                    window.location.href = this.dataset.weblink;
                 }
             });
-
-            // --- Initial Render ---
-            renderProductInfoToggles();
-            renderProductSelectionDropdowns();
-            updateContentCreationInputsModule1();
-            updateContent1Module(); // Initial update for module 1 (default active)
-            // No initial update for module 3 as it's hidden by default
         });
     </script>
+
 </body>
 </html>
