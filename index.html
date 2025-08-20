@@ -23,6 +23,13 @@
         #menu-overlay {
             transition: opacity 0.3s ease-in-out;
         }
+        /* Carousel item base style */
+        .carousel-item {
+            display: none;
+        }
+        .carousel-item.active {
+            display: block;
+        }
     </style>
 </head>
 <body class="bg-white text-black">
@@ -93,11 +100,13 @@
             <h2 class="text-2xl font-normal italic mb-12">Recent Projects</h2>
             
             <!-- Project Carousel -->
-            <div class="relative bg-white overflow-hidden">
-                <div id="carousel-track" class="flex">
+            <div class="relative bg-white">
+                <div id="carousel-container" class="relative min-h-[48rem] md:min-h-[38rem]">
                     <!-- Carousel items will be injected here by JS -->
                 </div>
-                <button id="next-btn" class="absolute top-1/2 right-4 transform -translate-y-1/2 z-10">
+                <!-- White overlay for fade-through-white effect -->
+                <div id="carousel-overlay" class="absolute inset-0 bg-white transition-opacity duration-1000 ease-in-out opacity-0 z-10 pointer-events-none"></div>
+                <button id="next-btn" class="absolute top-1/2 right-4 transform -translate-y-1/2 z-20">
                     <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </button>
             </div>
@@ -229,28 +238,28 @@
                 }
             ];
 
-            const track = document.getElementById('carousel-track');
+            const container = document.getElementById('carousel-container');
             const nextButton = document.getElementById('next-btn');
+            const carouselOverlay = document.getElementById('carousel-overlay');
             let currentIndex = 0;
             let slideInterval;
             let isTransitioning = false;
+            const fadeDuration = 1000; // Slower fade duration in ms
 
-            // Function to create and render all slides
             function renderSlides() {
-                track.innerHTML = ''; // Clear existing slides
-                
-                // Original slides
-                projects.forEach(project => {
-                    track.appendChild(createSlide(project));
+                container.innerHTML = ''; // Clear existing slides
+                projects.forEach((project, index) => {
+                    const slide = createSlide(project);
+                    if (index === 0) {
+                        slide.classList.add('active');
+                    }
+                    container.appendChild(slide);
                 });
-
-                // Cloned first slide for infinite loop
-                track.appendChild(createSlide(projects[0]));
             }
             
             function createSlide(project) {
                 const slide = document.createElement('div');
-                slide.className = 'w-full flex-shrink-0';
+                slide.className = 'carousel-item';
                 slide.innerHTML = `
                     <div class="md:flex md:items-start md:gap-8">
                         <div class="md:w-2/5 h-[32rem] md:h-[36rem]">
@@ -270,23 +279,34 @@
             function goToNextSlide() {
                 if (isTransitioning) return;
                 isTransitioning = true;
-                
-                currentIndex++;
-                track.style.transition = 'transform 0.5s ease-in-out';
-                track.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+                const slides = container.querySelectorAll('.carousel-item');
+                const currentSlide = slides[currentIndex];
+                const nextIndex = (currentIndex + 1) % slides.length;
+                const nextSlide = slides[nextIndex];
+
+                // 1. Fade in the white overlay
+                carouselOverlay.style.opacity = '1';
+
+                // 2. After the overlay is fully opaque, switch the content
+                setTimeout(() => {
+                    currentSlide.classList.remove('active');
+                    nextSlide.classList.add('active');
+                    currentIndex = nextIndex;
+
+                    // 3. Fade out the white overlay to reveal the new content
+                    carouselOverlay.style.opacity = '0';
+
+                    // 4. Mark transition as finished after the fade-out is complete
+                    setTimeout(() => {
+                        isTransitioning = false;
+                    }, fadeDuration);
+
+                }, fadeDuration);
             }
 
-            track.addEventListener('transitionend', () => {
-                isTransitioning = false;
-                if (currentIndex >= projects.length) {
-                    track.style.transition = 'none';
-                    currentIndex = 0;
-                    track.style.transform = `translateX(0%)`;
-                }
-            });
-
             function startSlideShow() {
-                slideInterval = setInterval(goToNextSlide, 5000); // 5 seconds
+                slideInterval = setInterval(goToNextSlide, 5000); 
             }
 
             function resetInterval() {
