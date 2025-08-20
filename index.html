@@ -23,14 +23,6 @@
         #menu-overlay {
             transition: opacity 0.3s ease-in-out;
         }
-        /* Hide scrollbar for the slider container */
-        .slider-container::-webkit-scrollbar {
-            display: none;
-        }
-        .slider-container {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
     </style>
 </head>
 <body class="bg-white text-black">
@@ -100,98 +92,13 @@
         <div>
             <h2 class="text-2xl font-normal italic mb-12">Recent Projects</h2>
             
-            <!-- Project Slider -->
-            <div class="relative -ml-4"> <!-- Negative margin to counteract padding on items -->
-                <!-- Slider Viewport -->
-                <div id="slider-container" class="slider-container overflow-x-auto snap-x snap-mandatory flex scroll-smooth">
-                    
-                    <!-- Project 1 -->
-                    <div class="flex-shrink-0 w-5/6 sm:w-2/3 md:w-1/2 lg:w-2/5 snap-center p-4">
-                        <div class="relative h-[38rem] overflow-hidden group">
-                            <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=1974&auto=format&fit=crop" alt="Project 1 Image" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
-                            <div class="absolute inset-0 bg-black bg-opacity-70 flex flex-col items-start p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <div>
-                                    <h3 class="text-3xl font-semibold text-white">Brand Identity Design</h3>
-                                    <p class="text-xl text-gray-300 mb-2">2024</p>
-                                    <p class="text-xl text-white">신규 뷰티 브랜드를 위한 로고, 패키지, 비주얼 아이덴티티 시스템을 구축했습니다.</p>
-                                    <a href="project-1.html" class="inline-block mt-4 text-xl text-white underline hover:text-gray-300 transition-colors">More →</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Project 2 -->
-                    <div class="flex-shrink-0 w-5/6 sm:w-2/3 md:w-1/2 lg:w-2/5 snap-center p-4">
-                        <div class="relative h-[38rem] overflow-hidden group">
-                            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop" alt="Project 2 Image" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
-                            <div class="absolute inset-0 bg-black bg-opacity-70 flex flex-col items-start p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <div>
-                                    <h3 class="text-3xl font-semibold text-white">Web App Development</h3>
-                                    <p class="text-xl text-gray-300 mb-2">2023</p>
-                                    <p class="text-xl text-white">여행 계획 서비스를 위한 반응형 웹 애플리케이션의 프론트엔드 개발을 담당했습니다.</p>
-                                    <a href="project-2.html" class="inline-block mt-4 text-xl text-white underline hover:text-gray-300 transition-colors">More →</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Project 3 -->
-                    <div class="flex-shrink-0 w-5/6 sm:w-2/3 md:w-1/2 lg:w-2/5 snap-center p-4">
-                        <div class="relative h-[38rem] overflow-hidden group">
-                            <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1974&auto=format&fit=crop" alt="Project 3 Image" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
-                            <div class="absolute inset-0 bg-black bg-opacity-70 flex flex-col items-start p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <div>
-                                    <h3 class="text-3xl font-semibold text-white">Mobile UI/UX Redesign</h3>
-                                    <p class="text-xl text-gray-300 mb-2">2022</p>
-                                    <p class="text-xl text-white">기존 커머스 앱의 사용자 경험을 개선하기 위해 전체 UI/UX 리디자인을 진행했습니다.</p>
-                                    <a href="project-3.html" class="inline-block mt-4 text-xl text-white underline hover:text-gray-300 transition-colors">More →</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Project 4 -->
-                    <div class="flex-shrink-0 w-5/6 sm:w-2/3 md:w-1/2 lg:w-2/5 snap-center p-4">
-                        <div class="relative h-[38rem] overflow-hidden group">
-                            <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070&auto=format&fit=crop" alt="Project 4 Image" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
-                            <div class="absolute inset-0 bg-black bg-opacity-70 flex flex-col items-start p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <div>
-                                    <h3 class="text-3xl font-semibold text-white">Corporate Website</h3>
-                                    <p class="text-xl text-gray-300 mb-2">2022</p>
-                                    <p class="text-xl text-white">IT 기업의 공식 웹사이트를 기획하고 디자인하여 기업 이미지를 제고했습니다.</p>
-                                    <a href="project-4.html" class="inline-block mt-4 text-xl text-white underline hover:text-gray-300 transition-colors">More →</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Project 5 -->
-                    <div class="flex-shrink-0 w-5/6 sm:w-2/3 md:w-1/2 lg:w-2/5 snap-center p-4">
-                        <div class="relative h-[38rem] overflow-hidden group">
-                            <img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?q=80&w=2070&auto=format&fit=crop" alt="Project 5 Image" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
-                            <div class="absolute inset-0 bg-black bg-opacity-70 flex flex-col items-start p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <div>
-                                    <h3 class="text-3xl font-semibold text-white">Content Platform UX</h3>
-                                    <p class="text-xl text-gray-300 mb-2">2021</p>
-                                    <p class="text-xl text-white">온라인 교육 콘텐츠 플랫폼의 사용자 리서치 및 정보 구조 설계를 진행했습니다.</p>
-                                    <a href="project-5.html" class="inline-block mt-4 text-xl text-white underline hover:text-gray-300 transition-colors">More →</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+            <!-- Project Carousel -->
+            <div class="relative bg-white overflow-hidden">
+                <div id="carousel-track" class="flex">
+                    <!-- Carousel items will be injected here by JS -->
                 </div>
-
-                <!-- Slider Navigation Arrows -->
-                <button id="prev-slide" class="absolute top-1/2 left-0 md:-left-4 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md z-10 transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
-                </button>
-                <button id="next-slide" class="absolute top-1/2 right-0 md:-right-4 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md z-10 transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
+                <button id="next-btn" class="absolute top-1/2 right-4 transform -translate-y-1/2 z-10">
+                    <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </button>
             </div>
         </div>
@@ -253,13 +160,13 @@
             function openMenu() {
                 sidebar.classList.remove('translate-x-full');
                 overlay.classList.remove('hidden');
-                document.body.style.overflow = 'hidden'; // Prevent background scroll
+                document.body.style.overflow = 'hidden';
             }
 
             function closeMenu() {
                 sidebar.classList.add('translate-x-full');
                 overlay.classList.add('hidden');
-                document.body.style.overflow = ''; // Restore background scroll
+                document.body.style.overflow = '';
             }
 
             openBtn.addEventListener('click', openMenu);
@@ -270,61 +177,132 @@
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
                     e.preventDefault();
-                    // Close mobile menu if it's open
                     if (!sidebar.classList.contains('translate-x-full')) {
                         closeMenu();
                     }
-                    
                     const targetId = this.getAttribute('href');
                     const targetElement = document.querySelector(targetId);
-                    
                     if(targetElement) {
-                        // Wait for menu to close before scrolling
                         setTimeout(() => {
-                            targetElement.scrollIntoView({
-                                behavior: 'smooth'
-                            });
+                            targetElement.scrollIntoView({ behavior: 'smooth' });
                         }, 300);
                     }
                 });
             });
 
-            // --- Project Slider Logic ---
-            const sliderContainer = document.getElementById('slider-container');
-            const prevButton = document.getElementById('prev-slide');
-            const nextButton = document.getElementById('next-slide');
-
-            // Function to scroll the slider
-            const scrollSlider = (direction) => {
-                // Find the first project item to calculate its full width including margin/padding
-                const slide = sliderContainer.querySelector('.snap-center');
-                if (slide) {
-                    const slideWidth = slide.offsetWidth;
-                    // We also need to account for the gap between items, which is handled by padding.
-                    // The offsetWidth includes padding, border, and scrollbar if any, but not margin.
-                    // The scroll is simpler if we just scroll by the width of one item.
-                    sliderContainer.scrollBy({ left: slideWidth * direction, behavior: 'smooth' });
+            // --- Project Carousel Data & Logic ---
+            const projects = [
+                {
+                    title: "Brand Identity Design",
+                    year: "2024",
+                    description: "신규 뷰티 브랜드를 위한 로고, 패키지, 비주얼 아이덴티티 시스템을 구축했습니다.",
+                    imageUrl: "https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=1974&auto=format&fit=crop",
+                    link: "project-1.html"
+                },
+                {
+                    title: "Web App Development",
+                    year: "2023",
+                    description: "여행 계획 서비스를 위한 반응형 웹 애플리케이션의 프론트엔드 개발을 담당했습니다.",
+                    imageUrl: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop",
+                    link: "project-2.html"
+                },
+                {
+                    title: "Mobile UI/UX Redesign",
+                    year: "2022",
+                    description: "기존 커머스 앱의 사용자 경험을 개선하기 위해 전체 UI/UX 리디자인을 진행했습니다.",
+                    imageUrl: "https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1974&auto=format&fit=crop",
+                    link: "project-3.html"
+                },
+                {
+                    title: "Corporate Website",
+                    year: "2022",
+                    description: "IT 기업의 공식 웹사이트를 기획하고 디자인하여 기업 이미지를 제고했습니다.",
+                    imageUrl: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070&auto=format&fit=crop",
+                    link: "project-4.html"
+                },
+                {
+                    title: "Content Platform UX",
+                    year: "2021",
+                    description: "온라인 교육 콘텐츠 플랫폼의 사용자 리서치 및 정보 구조 설계를 진행했습니다.",
+                    imageUrl: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?q=80&w=2070&auto=format&fit=crop",
+                    link: "project-5.html"
                 }
-            };
+            ];
 
-            // Event listeners for arrow buttons
-            prevButton.addEventListener('click', () => scrollSlider(-1));
-            nextButton.addEventListener('click', () => scrollSlider(1));
+            const track = document.getElementById('carousel-track');
+            const nextButton = document.getElementById('next-btn');
+            let currentIndex = 0;
+            let slideInterval;
+            let isTransitioning = false;
 
-            // Function to update arrow visibility based on scroll position
-            const updateArrowVisibility = () => {
-                const isAtStart = sliderContainer.scrollLeft < 10; // Add a small tolerance
-                const isAtEnd = sliderContainer.scrollLeft + sliderContainer.clientWidth >= sliderContainer.scrollWidth - 10; // Add a small tolerance
+            // Function to create and render all slides
+            function renderSlides() {
+                track.innerHTML = ''; // Clear existing slides
+                
+                // Original slides
+                projects.forEach(project => {
+                    track.appendChild(createSlide(project));
+                });
 
-                prevButton.style.display = isAtStart ? 'none' : 'block';
-                nextButton.style.display = isAtEnd ? 'none' : 'block';
-            };
+                // Cloned first slide for infinite loop
+                track.appendChild(createSlide(projects[0]));
+            }
             
-            // Initial check and update on scroll
-            sliderContainer.addEventListener('scroll', updateArrowVisibility);
-            // Also check on load and after a short delay to ensure layout is final
-            window.addEventListener('load', () => setTimeout(updateArrowVisibility, 100));
-            window.addEventListener('resize', updateArrowVisibility);
+            function createSlide(project) {
+                const slide = document.createElement('div');
+                slide.className = 'w-full flex-shrink-0';
+                slide.innerHTML = `
+                    <div class="md:flex md:items-start md:gap-8">
+                        <div class="md:w-2/5 h-[32rem] md:h-[36rem]">
+                            <img src="${project.imageUrl}" alt="${project.title}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="mt-6 md:mt-0 md:w-3/5 text-black p-4 md:p-0">
+                            <h3 class="text-2xl md:text-3xl font-semibold">${project.title}</h3>
+                            <p class="text-lg md:text-xl text-gray-500 my-2">${project.year}</p>
+                            <p class="text-base md:text-lg mb-4">${project.description}</p>
+                            <a href="${project.link}" class="inline-block bg-gray-200 text-black px-5 py-2 text-base md:text-lg rounded-full hover:bg-gray-300 transition-colors">More</a>
+                        </div>
+                    </div>
+                `;
+                return slide;
+            }
+
+            function goToNextSlide() {
+                if (isTransitioning) return;
+                isTransitioning = true;
+                
+                currentIndex++;
+                track.style.transition = 'transform 0.5s ease-in-out';
+                track.style.transform = `translateX(-${currentIndex * 100}%)`;
+            }
+
+            track.addEventListener('transitionend', () => {
+                isTransitioning = false;
+                if (currentIndex >= projects.length) {
+                    track.style.transition = 'none';
+                    currentIndex = 0;
+                    track.style.transform = `translateX(0%)`;
+                }
+            });
+
+            function startSlideShow() {
+                slideInterval = setInterval(goToNextSlide, 5000); // 5 seconds
+            }
+
+            function resetInterval() {
+                clearInterval(slideInterval);
+                startSlideShow();
+            }
+
+            // Event Listeners for buttons
+            nextButton.addEventListener('click', () => {
+                goToNextSlide();
+                resetInterval();
+            });
+
+            // Initial setup
+            renderSlides();
+            startSlideShow();
         });
     </script>
 
